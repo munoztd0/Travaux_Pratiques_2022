@@ -1,0 +1,383 @@
+---
+title: "Session 1: Introduction and Visualisation Extended (Answers)"
+subtitle: "David Munoz Tord & Denis Mongin"
+date: "October 10, 2022"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+# Setup 
+
+
+### Start up  - Folder structure
+(same as previous Rmd no need to do it twice)
+
+### Download datasets 
+
+- ExerciceBisphenol.csv 
+- ExercicePlasmaCholesterol.xlsx
+
+And save them into your "data" folder.
+
+
+### Same .Rproject 
+
+Double check that you are still in the same Rproject (check on the top right of RStudio)
+
+
+### Load libraries
+
+```{r, message=FALSE, warning=FALSE}
+#load required packages
+library(ggplot2) #to plot
+library(readr) #to read files
+library(here) #to find files
+
+
+#if you want to make it reproducible (more advance)
+# if(!require(pacman)) {install.packages(c("pacman"))}
+# 
+# pacman::p_load(here,ggplot2, readr)
+
+
+#these are just Rmarkdown visual options
+knitr::opts_chunk$set(message=F, warning=F, comment=NA) 
+
+
+```
+
+
+
+Find your path
+
+```{r}
+#here() #from the here packages is a neat magick trick that will find where you files are 
+#given that you are in a .Rproject, type help(here) for more info
+
+```
+
+# Read the data
+
+```{r}
+
+il18 <- read_csv(here("data", "freeIL18.csv")) #read the data
+#you can also just read it manually
+#il18 <- read_csv("C:/Users/david/Documents/cours_stat/freeIL18.csv")
+il18
+
+
+names(il18) <-  c("samples", "dis.act", "freeIL18", "TotalIL18") # assign new names to columns
+
+
+```
+
+# Visualizations
+
+## Numerical
+
+### Density Plots
+
+
+Show the density of a numeric variable
+
+A density plot shows the distribution of a numeric variable. It takes only numeric variables as input and is very close from an histogram. It can be use in the same exact condition.
+
+Tips:
+
+-   Play with the bandwidth of your density function.
+
+-   Don't show the distribution of more than \~5 variables. Use Violin or Ridge line plot instead.
+
+-   Avoid filling with color palettes.
+
+#### Do a Basic density plot: x = freeIL18
+
+```{r}
+
+
+#hint: ggplot(data, aes(...)) + geom_density()
+#hint2: assign your plot to an object, e.g. density <- ggplot(data, aes(...)) + geom_density()
+
+
+density <- ggplot(data = il18, aes(x = freeIL18)) + 
+   geom_density( fill="green")
+
+density
+
+```
+
+####  Density plot by groups (dis.act)
+
+```{r}
+
+#hint use fill
+ggplot() + 
+  geom_density(data = il18,
+             aes(x = freeIL18, fill=dis.act)) 
+
+```
+
+####  Stacked density plot
+
+```{r}
+
+#hint: same as before but use position="fill" in geom_density
+
+ggplot() + 
+  geom_density(data = il18,
+             aes(x = freeIL18, group=dis.act,  fill=dis.act), position="fill")
+```
+
+
+
+#  Data Manipulation
+
+### Load libraries
+
+```{r, message=FALSE, warning=FALSE}
+
+#install.packages("tidyr") #  data manipulation
+#install.packages("readxl") # read excel files
+#install.packages("writexl") # write excel files
+#install.packages("scales") # work with different scales
+ #<- you just need to run these lines once
+
+
+library(tidyr)
+library(readxl)
+library(writexl)
+library(scales)
+
+```
+
+
+#### Try to read a .csv file: ExerciceBisphenol.csv
+```{r}
+
+#hint: use read_csv() and call it df_bisphenol
+
+
+df_bisphenol <- read_csv(here("data", "ExerciceBisphenol.csv")) #read the data
+#you can also just read it manually
+#df_bisphenol <- read_csv("C:/Users/david/Documents/cours_stat/ExerciceBisphenol.csv")
+
+df_bisphenol
+
+```
+
+
+#### Try to read an excel file
+
+```{r}
+
+#hint: use read_xlsx() and call it plasma
+
+plasma <- read_xlsx(here("data", "ExercicePlasmaCholesterol.xlsx"))
+#you can also just read it manually
+#plasma <- read_xlsx("C:/Users/david/Documents/cours_stat/ExercicePlasmaCholesterol.xlsx")
+
+plasma
+
+```
+
+#### Look at the data
+
+
+Output the summary of the Bisphenol data
+
+```{r}
+#hint use summary() and or str()
+summary(df_bisphenol)
+```
+
+Same for the Plasma data
+
+```{r}
+#hint use summary() and or str()
+summary(plasma)
+```
+
+
+
+### Let's look deeper into plasma
+
+We will start with plasma. We have names with spaces, let's rename them !
+
+```{r}
+#rename the columns of plasma data to "control","treatment_1","treatment_2"
+#hint: use names() and a vector of names i.e. c("..",  "..")
+
+names(plasma) <- c("control","treatment_1","treatment_2")
+plasma
+```
+
+
+#### Wide to long format
+Wide, or unstacked data is presented with each different data variable in a separate column.
+
+Long, or narrow data is presented with one column containing all the values and another column listing the context of the values.
+
+Many functions in R expect data to be in a long format rather than a wide format.
+
+Here the data is in a wide format, let's put it in long format so we can use all the power of mist R functions.
+
+For that we use the package **tidyr**
+
+```{r}
+
+plasma_long <- pivot_longer(data = plasma,c("control","treatment_1","treatment_2"))
+plasma_long
+```
+Reflect: Do you see the differences ?
+
+
+#### Now do a boxplot : x = name, y = value and add point
+
+```{r}
+
+#hint: use geom_boxplot + geom_jitter
+#hint2: you might want to rename the column ?
+#bonus: try to do the same plot with plasma (the one in wide format)
+ 
+
+ggplot(plasma_long,
+       aes(x = name,y= value))+
+geom_boxplot()+
+geom_jitter()
+
+
+```
+
+### Let's look deeper into  bisphenol
+
+
+
+Contingency tables of some experiment, to check is groups are of the same length.
+
+
+```{r}
+df_bisphenol$tot <- df_bisphenol$Cancer + df_bisphenol$NoCancer
+df_bisphenol
+```
+
+
+#### Let's try a barplot with this wide format data:
+
+First just plot the "cancer"
+
+NB: we use geom_col
+
+```{r}
+wide_plot <- ggplot(df_bisphenol)+
+  geom_col(aes(group,Cancer,fill = "cancer"))
+
+wide_plot
+```
+
+Then add the "no cancer"
+
+```{r}
+wide_plot+
+  geom_col(aes(group,NoCancer,fill = "no cancer"))
+```
+#### Problem! 
+
+The second bar is over the first one! Need to be in **long** format too! Can you do it ?
+
+```{r}
+
+#hint: use pivot_longer
+
+df_bisphenol_long <- df_bisphenol %>% 
+  pivot_longer(c("Cancer","NoCancer"))
+
+# names(df_bisphenol_long) <- c("group","output","Nindividual")
+
+  ggplot(df_bisphenol_long,
+         aes(group,value,fill = name))+
+  geom_col()+
+  coord_flip()
+```
+
+#### Change from "stacked" plot to "dodged" plot
+```{r}
+
+#hint: do the same thing but add position = "dodge" to geom_col()
+  ggplot(df_bisphenol_long,
+         aes(group,value,fill = name))+
+  geom_col(position = "dodge")+
+  coord_flip()
+```
+
+
+#### Add percents
+```{r}
+
+#hint do the same thing as step one but add scale_y_continuous(labels = percent_format(accuracy = 1)) at the end
+
+ggplot(df_bisphenol_long,
+         aes(group,value,fill = name))+
+  geom_col(position = "fill")+
+  coord_flip()+
+  scale_y_continuous(labels = percent_format(accuracy = 1))
+
+```
+
+
+# More Visualisation Stuff
+
+### Use themes
+
+##### Default
+
+```{r}
+
+violin <- ggplot(data = il18, aes(x = dis.act, y = freeIL18, fill=dis.act )) +
+  geom_violin() + 
+  xlab("Disease activity")
+
+violin + theme_gray() # the default
+```
+
+##### Black and White
+
+```{r}
+violin + theme_bw() # the default
+```
+
+##### Classic
+
+```{r}
+violin + theme_classic() # the default
+```
+
+
+
+### Interactive plots
+
+The package **plotly** helps creating awesome interactive data vizualisation and maks it super easy to do !
+
+First load it
+
+```{r}
+
+#install.packages(plotly) # install it if you don't have it
+
+library(plotly)
+```
+
+Lets redo the last scatter plot but this time with a twist !
+
+```{r}
+plot_object <- ggplot() + 
+  geom_point(data = il18,
+             aes(x = freeIL18, y = TotalIL18,  color=dis.act)) +
+  geom_point()
+
+ggplotly(plot_object)
+```
