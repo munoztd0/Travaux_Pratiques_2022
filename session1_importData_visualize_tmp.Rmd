@@ -1,0 +1,567 @@
+---
+title: "Session 1: Introduction and Visualisation (Template)"
+subtitle: "Your Name"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+# Setup
+
+### Start up  - Folder structure
+
+Create a folder named "Stats_2022" (or whatever similar to your liking) 
+
+Inside this folder create a folder named "Session_1" (or whatever similar to your liking)
+
+And inside this one create a folder names "data" (here I really suggest you call it "data")
+
+### Download dataset
+
+- freeIL18.csv
+
+And save it into your "data" folder.
+
+
+### Create an .Rproject 
+
+Within RStudio go into Files -> New Project
+
+Choose: Existing Project and browser the "Session_1" folder you just created (or whatever you named it)
+
+This will reload RStudio, don't worry
+
+
+### Load libraries
+
+```{r, message=FALSE, warning=FALSE}
+#load required packages
+library(ggplot2) #to plot
+library(readr) #to read files
+library(here) #to find files
+
+
+#if you want to make it reproducible (more advance)
+# if(!require(pacman)) {install.packages(c("pacman"))}
+# 
+# pacman::p_load(here,ggplot2, readr)
+
+
+#these are just Rmarkdown visual options
+knitr::opts_chunk$set(message=F, warning=F, comment=NA) 
+
+
+```
+
+
+
+Find your path
+
+```{r}
+here() #from the here packages is a neat magic trick that will find where you files are 
+#given that you are in a .Rproject, type help(here) for more info
+
+```
+
+# Read the data
+
+```{r}
+
+il18 <- read_csv(here("data", "freeIL18.csv")) #read the data
+#you can also just read it manually
+#il18 <- read_csv("C:/Users/david/Documents/cours_stat/freeIL18.csv")
+il18
+
+
+```
+
+Check the column names, what can you see ?
+
+```{r}
+names(il18) #get you the column names
+```
+
+Rename the columns.
+
+Tips:
+
+-   We tend to avoid spaces, parenthesis and slashes in variable names, prefer points or underscores.
+
+```{r}
+names(il18) <-  c("samples", "dis.act", "freeIL18", "TotalIL18") # assign new names to columns
+
+
+#check if it worked
+names(il18)
+```
+
+# Summary
+
+## Structure summary
+
+```{r}
+#str stand for "structure", it will show you which "type" R thinks you variable belongs too
+str(il18) 
+# for example chr stands for "character" and num for "numeric"
+#you always want to be sure that number are not seen as "chr" which will happen if there is only one simple letter inside the whole column
+
+```
+
+## Global summary
+
+```{r}
+#summary is a generic function used to produce result summaries 
+summary(il18)
+#it will do different things depending on what object you gave it
+#here we gave a data frame so it gave us a brief summary of the variable, 
+#i.e. min, max, quartiles and mean for the numeric variables and the count for character variables
+```
+
+Factorize character types
+
+```{r}
+#But often when we work with characters we want to transform them into "factors" which adds levels to them
+il18$dis.act <- as.factor(il18$dis.act) 
+
+#what did it change here ?
+summary(il18)
+
+```
+
+
+
+
+#### Now try to plot !
+
+# Visualizations
+
+## Categoric
+
+### Barplots
+
+Represents the value of entities using bar of various length.
+
+A barplot shows the relationship between a numeric and a categorical variable. Each entity of the categorical variable is represented as a bar. The size of the bar represents its numeric value.
+
+Barplot is sometimes described as a boring way to visualize information. However it is probably the most efficient way to show this kind of data. Ordering bars and providing good annotation are often necessary.
+
+Tips:
+
+-   Do not confound it with a histogram.
+
+-   Long labels? Think of an horizontal version.
+
+-   Sorting bars often add insight.
+
+
+##### Do a basic barplot: x = dis.act
+
+```{r}
+
+#hint: ggplot(data, aes(...)) + geom_bar()
+#hint2: assign your plot to an object, e.g. barplot <- ggplot(data, aes(...)) + geom_bar()
+
+
+```
+
+
+
+##### Add some colors
+
+```{r}
+
+#hint: use the "barplot" object from previously
+#hint2: use fill or color arguments (or both?), what is the difference?
+#hint3: you can use any basic color in English in between parenthesis i.e. "green", "red", "black"
+
+
+```
+
+
+##### Change x-axis label
+
+```{r}
+
+#hint: use the "barplot" object from previously
+#hint2: use xlab("something")
+
+
+
+``` 
+
+
+
+
+##### Change stats: Compare proportions
+
+```{r}
+
+# proportion with colors and label on X-axis
+# we want proportion now but note that if you change ..prop.. by ..count.. you get the first plot, this is because ..count.. is just the default
+ggplot(data = il18, aes(dis.act)) + 
+  geom_bar(aes(y = ..prop.., group = 1)) + 
+  xlab("Disease activity") +   #change x-axis label
+  scale_x_discrete(labels = c("Active", "Inactive")) #Rename the levels
+```
+
+Next step is almost always data wrangling. Bare with us for a minute.
+
+We want to know the proportion of low and high level of IL18 in each group:
+
+```{r}
+
+il18$levelFreeIL18 <- factor(il18$freeIL18 < 5, labels = c("High", "Low"))
+#let's unpack this
+#1) we create a new variable called "levelFreeIL18" (part on the left)
+#2) we assign this variable values (part on the right)
+# (looking within the right part only now)
+#3) We create a factor (outer part) of high and low IL18
+#?) NB: il18$freeIL18 < 5 will check if IL18 is smaller than 5 for each row 
+# and if it is, it will spit out TRUE and if it isn't it will spit FALSE -> try it yourself
+# type  in the console: il18$freeIL18 < 5   
+# what the other stuff do is just reassign labels to FALSE and TRUE
+# but why HIGH is the first argument ? That's because if you type: factor(il18$freeIL18 < 5)
+# you will see that the first level will be FALSE, this is because it goes alphabetically by default, always watch out for this !
+# so we reassign : Levels: FALSE TRUE  to: Levels: HIGH LOW
+
+```
+
+
+##### Now try to do a "stacked" barplot: group = levelFreeIL18
+
+
+```{r}
+#hint: To do that you want to use dis.act has the x-axis aesthetic and levelFreeIL18 has the fill aesthetic
+
+
+```
+
+### Tables
+
+```{r}
+table(il18$levelFreeIL18, il18$dis.act)
+prop.table(table(il18$levelFreeIL18, il18$dis.act), marg = 1)
+```
+
+## Numeric
+
+### Histograms
+
+An accurate graphical representation of the distribution of numeric data.
+
+A histogram takes as input a numeric variable only. The variable is cut into several bins, and the number of observation per bin is represented by the height of the bar. It is possible to represent the distribution of several variable on the same axis using this technique.
+
+Tips:
+
+-   Play with the bin size, it can give different insight.
+
+-   Don't show the distribution of more than \~5 variables. Use violin or ridgeline plot instead.
+
+
+##### Do a basic histogram: x = freeIL18
+
+```{r}
+
+#hint: ggplot(data, aes(...)) + geom_histogram()
+#hint2: assign your plot to an object, e.g. hist <- ggplot(data, aes(...)) + geom_histogram()
+
+
+
+```
+
+
+##### Now change the binwidth
+
+```{r}
+# play around with th binwidth, what looks best according to you, why?
+
+
+```
+
+##### Add a vertical line at a 100
+
+```{r}
+# hint: use  geom_vline
+
+
+```
+
+
+
+
+#### Histogram with +/- one sd
+```{r}
+ ggplot(data = il18, aes(freeIL18)) +  
+  geom_histogram() + 
+  geom_vline(xintercept = mean(il18$freeIL18), col = "green") +  #create an vertical line at the mean
+  geom_vline(xintercept = c(
+    mean(il18$freeIL18) - sd(il18$freeIL18), #create an vertical line at - 1 sd
+    mean(il18$freeIL18) + sd(il18$freeIL18) #create an vertical line at + 1 sd
+  ), col = "red")
+```
+
+#### Histogram with kernel density
+```{r}
+ggplot(data = il18, aes(freeIL18))  +
+  geom_histogram(aes(y = ..density..),
+                 colour = 1, fill = "green") +
+  geom_density()
+
+```
+
+### Boxplots
+
+Summarize the distribution of numeric variables
+
+A boxplot gives a nice summary of one or several numeric variables. The line that divides the box into 2 parts represents the median of the data. The end of the box shows the upper and lower quartiles. The extreme lines show the highest and lowest value excluding outliers.
+
+Tips:
+
+-   Boxplots hide the sample size of each group, show it with annotation or box width.
+
+-   Boxplots hide the underlying distribution. Use jitter if low number of data points, or use violin with bigger data.
+
+-   Order your boxplots by median can make it more insightful.
+
+
+#### Do a basic boxplot: y = freeIL18
+
+##### A little clarification
+
+For one variable things are a bit more complex than it should be with ggplot, but you can use this simple command instead:
+
+```{r}
+
+boxplot(il18$freeIL18)
+
+```
+
+But you can of course do it with ggplot, it goes like this:
+
+```{r}
+p.freeil <- ggplot(data = il18, aes(freeIL18))
+p.freeil + 
+  geom_boxplot() + 
+  coord_flip() + # flip it vertically (because x = freeIL18 but we want it on the y-axis here)
+  scale_y_discrete(breaks = NULL) #remove breaks on the y-axis which is flipped
+``` 
+
+
+Or like this if you prefer;
+
+```{r}
+ggplot() + # empty ggplot
+  geom_boxplot(aes(y=il18$freeIL18)) + #only add variable instead of whole dataset
+  scale_x_discrete(breaks = NULL) #remove breaks on the x-axis
+```
+
+
+#### Now you try: Boxplot y = freeIL18 by  x = dis.act
+
+Note that now that you plot by a categorical variable there is no more fuss
+
+
+
+```{r}
+
+#hint: ggplot(data, aes(...)) + geom_boxplot()
+#hint2: assign your plot to an object, e.g. boxplot <- ggplot(data, aes(...)) + geom_boxplot()
+
+
+```
+
+
+#### Now add some points
+
+
+```{r}
+
+#hint: use boxplot object
+#hint2: add geom_jitter
+#where are the outlier points ? Do you find something weird?
+
+
+
+```
+
+
+#### Jitter specs
+
+Jitter points randomly put on the x-axis
+
+```{r}
+ggplot(il18, aes(x = dis.act, y = freeIL18)) + 
+  geom_jitter(
+  aes(x = dis.act, y = freeIL18, fill = dis.act),
+  shape = 21,  #you can change the shape of the points check http://www.sthda.com/english/wiki/ggplot2-point-shapes
+  width = .2, #width of the jitter
+  height = 0 #height of the jitter
+) + 
+  xlab("Disease activity")
+```
+
+
+#### Dotplot
+
+Jitter points arranged on the x-axis
+
+```{r}
+dotplot <- ggplot(il18, aes(x = dis.act, y = freeIL18))  + 
+   geom_dotplot(aes(x = dis.act, y = freeIL18, fill = dis.act),
+                binaxis='y', stackdir='center', 
+                dotsize=0.3, binwidth=10)
+
+dotplot
+
+```
+
+##### Put it together!
+
+```{r}
+
+ggplot(il18, aes(x = dis.act, y = freeIL18)) + 
+  geom_boxplot(aes(x = dis.act, y = freeIL18), outlier.shape = NA) + #remove outliers point from boxplot because we already get them form jitter
+   geom_dotplot(aes(x = dis.act, y = freeIL18, fill = dis.act),
+                binaxis='y', stackdir='center',
+                dotsize=0.3, binwidth=10)
+
+```
+
+
+
+### Violin Plots
+
+An alternative to boxplot to compare the distribution of several groups.
+
+Violin plots allow to visualize the distribution of a numeric variable for one or several groups. It is really close from a boxplot, but allows a deeper understanding of the distribution.
+
+Violins are particularly adapted when the amount of data is huge and showing individual observations gets impossible.
+
+Tips:
+
+-   If you have just a few groups, you are probably interested by ridgeline charts.
+
+-   If you compare groups with very different sample size, show it.
+
+-   Ordering groups by median value makes the chart more insightful.
+
+#### Basic Violin: x = dis.act  and y = freeIL18
+
+```{r}
+
+violin <- ggplot(data = il18, aes(x = dis.act, y = freeIL18, fill=dis.act )) +
+  geom_violin() + 
+  xlab("Disease activity")
+
+violin
+
+```
+
+#### No Trimming
+
+```{r}
+violin +
+  geom_violin(trim=FALSE)
+```
+
+#### With Boxplot
+
+Do you see the similarities ?
+
+```{r}
+violin +
+   geom_boxplot(width=0.1)
+```
+
+#### With mean and +/- standard deviation
+
+```{r}
+violin +
+  geom_violin(trim=FALSE) +
+  stat_summary(fun.data=mean_sdl, fun.args = list(mult = 1),
+      geom="pointrange")
+
+# The function mean_sdl is used. mean_sdl computes the mean plus or minus a constant times the standard deviation.
+# 
+# In the R code below, the constant is specified using the argument mult (mult = 1). By default mult = 2.
+
+```
+
+#### With with dots
+
+```{r}
+violin +
+   geom_dotplot(binaxis='y', stackdir='center', 
+                dotsize=0.3, binwidth=10
+                )
+
+```
+
+### Scatter Plots
+
+Show the relationship between 2 numeric variables.
+
+A scatter plot displays the relationship between 2 numeric variables. For each data point, the value of its first variable is represented on the X axis, the second on the Y axis
+
+Tips:
+
+-   Over-plotting is the most common mistake when sample size is high.
+
+-   Don't forget to show subgroups if you have some.
+
+
+#### Do a Basic scatter plot: x = freeIL18 and y = TotalIL18
+```{r}
+
+#hint: ggplot(data, aes(...)) + geom_point()
+#hint2: assign your plot to an object, e.g. scatter <- ggplot(data, aes(...)) + geom_point()
+
+
+
+```
+
+#### Color point by group (dis,act)
+```{r}
+
+#hint: use color as a global aesthetic
+
+
+```
+
+##### Select some points: subset the data!
+
+```{r}
+il18[il18$freeIL18 > 100,]
+```
+
+#### now we color the point bigger than 100
+```{r}
+ggplot(data = il18, aes(x = freeIL18, y = TotalIL18)) +
+  geom_point() + #basic
+  geom_point(data = il18[il18$freeIL18 > 100,], # add red to the points bigger than 100
+    aes(x = freeIL18, y = TotalIL18),
+    col = "red",
+    alpha = .2,
+    size = 5
+  )
+```
+
+
+
+# Ressources
+
+
+Take a look at [ggplot cheatsheet for dataviz](https://github.com/rstudio/cheatsheets/blob/main/data-visualization-2.1.pdf).
+
+
+Take a look at [tidyr cheatsheet for data manipulation](https://github.com/rstudio/cheatsheets/blob/main/tidyr.pdf).
+
+
+You should take a look at Yan Holtz amazing website [From data to Viz](https://www.data-to-viz.com/) which this presentation is very heavily based on.
+
+PS: We tried to show you different ways to plot with a single dataset to make things simpler. That's why sometimes the data is not adequate for the plot.
