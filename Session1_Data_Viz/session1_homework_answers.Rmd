@@ -1,0 +1,78 @@
+---
+title: "Session 1: Homework"
+subtitle: "Your Name"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+### Download the dataset on moodle (folder Data)
+
+- data_RT.csv
+
+And save it into your "data" folder.
+
+
+### Load libraries
+
+```{r, message=FALSE, warning=FALSE}
+#load required packages
+library(ggplot2) #to plot
+library(readr) #to read files
+library(here) #to manages paths
+
+```
+
+
+### Read the data and check it out
+
+```{r}
+
+#hint: use read_csv or double click on the file and import
+#hint2: watch out what name is assigned to the data !
+
+data_RT  <- read_csv("C:/Users/dmunoz/Downloads/data_RT.csv") #read the data
+#you can also just read it manually
+#daat_RT <- read_csv("C:/Users/david/Documents/cours_stat/data_RT.csv")
+data_RT
+
+
+```
+
+
+
+### Do a stacked barplot: 
+
+
+```{r}
+
+#hint: x = intervention and fill with type
+
+barplot <- ggplot(data_RT, aes(intervention, fill=type)) +  #here we only need on variable so ggplot will automatically assign it to
+# to the x-axis
+ geom_bar()
+
+barplot
+
+```
+
+### Do a basic histogram: 
+
+```{r}
+
+#hint: x = RT
+
+
+hist <- ggplot(data_RT, aes(RT)) + 
+  geom_histogram()
+
+hist
+
+```
+
+### You are all done !
