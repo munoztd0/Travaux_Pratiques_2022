@@ -1,0 +1,82 @@
+---
+title: "Session 1: Homework"
+subtitle: "Your Name"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+### Download the dataset on moodle (folder Data)
+
+- data_RT.csv
+
+And save it into your "data" folder.
+
+
+### Load libraries
+
+```{r, message=FALSE, warning=FALSE}
+#load required packages
+library(ggplot2) #to plot
+library(readr) #to read files
+library(here) #to manages paths
+
+```
+
+
+### Read the data and check it out
+
+A little bit about the data.
+
+This is a modified dataset from a cognitive neuroscience experiment.
+
+It basically tried to compare typical adults (TA) vs patients with Alzheimer's disease (AD) on a reaction time (RT) task. 
+
+Participants also had to go through a cognitive intervention or went through a control condition
+
+So you have
+
+- id: Each participants experiment ID
+- intervention: Wether or not the participant went trough the intervention or the control condition
+- type: Wether the participant was disgnosed with AD or not
+- RT: Each participant's reaction time to a cognitive task
+
+
+```{r}
+
+#hint: use read_csv or double click on the file and import
+#hint2: watch out what name is assigned to the data !
+
+
+
+```
+
+
+
+### Do a stacked barplot: 
+
+
+```{r}
+
+#hint: x = intervention and fill with type
+
+
+
+```
+
+### Do a basic histogram: 
+
+```{r}
+
+#hint: x = RT
+
+
+
+```
+
+### You are all done !
