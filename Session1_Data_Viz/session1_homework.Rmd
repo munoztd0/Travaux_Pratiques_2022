@@ -42,8 +42,8 @@ Participants also had to go through a cognitive intervention or went through a c
 So you have
 
 - id: Each participants experiment ID
-- intervention: Wether or not the participant went trough the intervention or the control condition
-- type: Wether the participant was disgnosed with AD or not
+- intervention: Whether or not the participant went through the intervention or the control condition
+- type: Whether the participant was diagnosed with AD or not
 - RT: Each participant's reaction time to a cognitive task
 
 
@@ -69,7 +69,7 @@ So you have
 
 ```
 
-### Do a basic histogram: 
+### Do a basic histogram, then add a vertical line for the median and another for the mean values: 
 
 ```{r}
 
@@ -78,5 +78,6 @@ So you have
 
 
 ```
+
 
 ### You are all done !
