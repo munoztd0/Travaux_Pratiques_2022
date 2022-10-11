@@ -1,0 +1,110 @@
+---
+title: 'Cession 2: parameters estimate'
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F)
+```
+
+```{r}
+library(ggplot2)
+library(viridis)
+library(viridisLite)
+```
+
+The goal of this code is to create a small simulation study to
+
+  1. illustrate central limit theorem
+  2. show that 95% of generated samples should contain the true parameters
+
+Let's generate some data
+
+```{r}
+population <- rnorm(10000,mean=0,sd=1)
+hist(population)
+```
+
+I generated a population of 1000 individuals following a gaussian distribution. I will now make a resmaple of this:
+
+```{r}
+sample_size <- 50
+mysample <- sample(population,sample_size)
+hist(mysample)
+```
+
+I can calculate statistics of this sample:
+
+```{r}
+summary(mysample)
+```
+
+
+I now create 100 sample of size `sample_size`, with their statistics:
+
+```{r}
+mySampleRes <- data.frame(mean=rep(0,100),
+                          sd=rep(1,100),
+                          sample = rep(NA,100),
+                          se=rep(1/sqrt(10),100),
+                          confintLow=rep(0,100),
+                          confintHi=rep(0,100))
+for (i in 1:100){
+  mysample <- sample(population,sample_size)
+  mySampleRes$sample[i] <- i
+  mySampleRes$mean[i] <- mean(mysample)
+  mySampleRes$sd[i] <- sd(mysample)
+  mySampleRes$se[i] <- mySampleRes$sd[i]/sqrt(sample_size)
+  mySampleRes$confintLow[i] <- mySampleRes$mean[i]-1.96*mySampleRes$se[i]
+  mySampleRes$confintHi[i] <- mySampleRes$mean[i]+1.96*mySampleRes$se[i]
+}
+mySampleRes
+```
+```{r}
+mySampleRes$within_confint <- as.numeric(mySampleRes$confintLow < 0 & mySampleRes$confintHi > 0)
+table(mySampleRes$within_confint)
+```
+
+```{r}
+ggplot(mySampleRes,
+       aes(sample,mean,color = as.factor(within_confint)))+
+  geom_point()+
+  geom_errorbar(aes(ymin = confintLow,ymax = confintHi))+
+  geom_hline(yintercept = 0,color = "green")+
+  coord_flip()
+```
+
+
+
+
+```{r}
+p_sample <- ggplot()+
+  geom_histogram(data = mySampleRes,
+                 aes(x=mean),binwidth = .2)+
+  xlim(round(min(population)),round(max(population)))+
+  geom_vline(xintercept = 0,color = "green")+
+  labs(title = "sample means")
+p_sample
+```
+Here we see the distribution of the means! Distribution of the means depends on the sample size.
+
+
+```{r}
+
+library(patchwork)
+
+p_population <- ggplot()+
+geom_histogram(data = data.frame(x = population),
+               aes(x=x),binwidth = .2)+
+  xlim(round(min(population)),round(max(population)))+
+  labs(title = "population")
+
+
+p_population / p_sample
+```
+
+
+
+
