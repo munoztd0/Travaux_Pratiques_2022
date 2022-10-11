@@ -69,7 +69,7 @@ So you have
 
 ```
 
-### Do a basic histogram: 
+### Do a basic histogram, then add a vertical line for the median and another for the mean values: 
 
 ```{r}
 
@@ -78,5 +78,6 @@ So you have
 
 
 ```
+
 
 ### You are all done !
