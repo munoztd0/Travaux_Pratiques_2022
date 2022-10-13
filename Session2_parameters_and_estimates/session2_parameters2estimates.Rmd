@@ -1,110 +1,168 @@
 ---
-title: 'Cession 2: parameters estimate'
+title: "Session 2: Parameters Estimate"
+subtitle: "Denis Mongin & David Munoz Tord"
+date: "October 16, 2022"
 output:
   html_document:
-    df_print: paged
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
 ---
 
+# Setup
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(warning = F)
+
+knitr::opts_chunk$set(message=F, warning=F, comment=NA) #these are just Rmarkdown visual options
+
 ```
 
+### Load libraries
+
 ```{r}
+
 library(ggplot2)
-library(viridis)
-library(viridisLite)
+
 ```
 
-The goal of this code is to create a small simulation study to
+# Simulation
 
-  1. illustrate central limit theorem
-  2. show that 95% of generated samples should contain the true parameters
+The goal of this code is to create a small simulation study to:
 
-Let's generate some data
+1.  illustrate central limit theorem
+
+2.  show that 95% of generated samples should contain the true parameters
+
+### Let's generate some data
 
 ```{r}
-population <- rnorm(10000,mean=0,sd=1)
-hist(population)
+
+#random generation for the normal distribution with mean equal to mean and standard deviation equal to sd.
+population <- rnorm(10000, mean=0, sd=1)
+
+ggplot() + geom_histogram(aes(population)) #do a simple histogram
 ```
 
-I generated a population of 1000 individuals following a gaussian distribution. I will now make a resmaple of this:
+We now generate a population of 1000 individuals following a Gaussian distribution.
+
+### Resample
+
+We will now randomly sample 50 individuals from this population.
 
 ```{r}
-sample_size <- 50
-mysample <- sample(population,sample_size)
-hist(mysample)
+sample_size <- 50 # you can play around with this number
+
+mysample <- sample(population, sample_size) #take a data + a sample size 
+
+ggplot() + geom_histogram(aes(mysample)) #do a simple histogram
+
 ```
 
-I can calculate statistics of this sample:
+Can you describe the differences ?
+
+Play around with the sample size and see what happens. (Just change "50" to something else)
+
+### Calculate sample's statistics
 
 ```{r}
 summary(mysample)
 ```
 
-
-I now create 100 sample of size `sample_size`, with their statistics:
+We now create 100 sample of size `sample_size`, with their statistics:
 
 ```{r}
-mySampleRes <- data.frame(mean=rep(0,100),
-                          sd=rep(1,100),
-                          sample = rep(NA,100),
-                          se=rep(1/sqrt(10),100),
-                          confintLow=rep(0,100),
-                          confintHi=rep(0,100))
-for (i in 1:100){
-  mysample <- sample(population,sample_size)
-  mySampleRes$sample[i] <- i
-  mySampleRes$mean[i] <- mean(mysample)
-  mySampleRes$sd[i] <- sd(mysample)
-  mySampleRes$se[i] <- mySampleRes$sd[i]/sqrt(sample_size)
-  mySampleRes$confintLow[i] <- mySampleRes$mean[i]-1.96*mySampleRes$se[i]
-  mySampleRes$confintHi[i] <- mySampleRes$mean[i]+1.96*mySampleRes$se[i]
+
+size = 100
+
+#this creates a dataframe with fix parameters (do not need to understand this code)
+#rep() juste repeat a number over the number of time you want
+
+# this is are all random number has placeholder for later
+mySampleRes <- data.frame(mean=rep(0,size),
+                          sd=rep(1,size),
+                          sample = rep(NA,size),
+                          se=rep(1/sqrt(10),size), 
+                          confintLow=rep(0,size),
+                          confintHi=rep(0,size))
+
+mySampleRes # all rows are the same for now
+```
+
+```{r}
+
+#loop through each row
+
+for (i in 1:size){
+  mysample <- sample(population, sample_size)#sample from population, same as above
+  mySampleRes$sample[i] <- i #assign an incemental index 
+  mySampleRes$mean[i] <- mean(mysample) #calculate the mean of this random sample
+  mySampleRes$sd[i] <- sd(mysample) #calculate the standard deviation of this random sample
+  mySampleRes$se[i] <- mySampleRes$sd[i]/sqrt(sample_size) #calculate the sampling error of this random sample
+  mySampleRes$confintLow[i] <- mySampleRes$mean[i]-1.96*mySampleRes$se[i] #calculate the lower 95% confidence interval of this random sample
+  mySampleRes$confintHi[i] <- mySampleRes$mean[i]+1.96*mySampleRes$se[i] #calculate the upper 95% confidence interval of this random sample
 }
+
 mySampleRes
+
+
+# for reference:
+# Confidence level Confidence interval (mean ± sampling error)
+# 68% mean ± (1.0) x (SE)
+# 95% mean ± (1.96) x (SE)
+# 99% mean ± (2.58) x (SE) 
+# Bonus: Can you describe/explain/visualize why ?
 ```
+
 ```{r}
-mySampleRes$within_confint <- as.numeric(mySampleRes$confintLow < 0 & mySampleRes$confintHi > 0)
+
+mySampleRes$within_confint <- factor(mySampleRes$confintLow < 0 & mySampleRes$confintHi > 0, labels = c("Outside", "Inside")) # create variable to check if we have found and estimate (mean) which its confindence intervals doesn't include 0
+
 table(mySampleRes$within_confint)
+
 ```
+
+What does this mean ?
+
+Let's plot it !
 
 ```{r}
 ggplot(mySampleRes,
-       aes(sample,mean,color = as.factor(within_confint)))+
+       aes(sample,mean,color = within_confint))+
   geom_point()+
   geom_errorbar(aes(ymin = confintLow,ymax = confintHi))+
   geom_hline(yintercept = 0,color = "green")+
   coord_flip()
 ```
 
+Red estimates are different than zero with 95% confidence
 
-
+### Distribution of the means
 
 ```{r}
 p_sample <- ggplot()+
   geom_histogram(data = mySampleRes,
-                 aes(x=mean),binwidth = .2)+
-  xlim(round(min(population)),round(max(population)))+
-  geom_vline(xintercept = 0,color = "green")+
-  labs(title = "sample means")
+                 aes(x=mean),binwidth = .2) +
+  xlim(round(min(population)),round(max(population))) +
+  geom_vline(xintercept = 0,color = "green") +
+  labs(title = "Sampled Means")
+
 p_sample
 ```
-Here we see the distribution of the means! Distribution of the means depends on the sample size.
 
+Here we see the distribution of the means!
+
+Distribution of the means depends on the sample size.
 
 ```{r}
 
-library(patchwork)
-
 p_population <- ggplot()+
-geom_histogram(data = data.frame(x = population),
-               aes(x=x),binwidth = .2)+
-  xlim(round(min(population)),round(max(population)))+
-  labs(title = "population")
+                geom_histogram(data = data.frame(x = population),
+                               aes(x=x),binwidth = .2)+
+                  xlim(round(min(population)),round(max(population)))+
+                  labs(title = "population")
 
 
 p_population / p_sample
 ```
-
-
-
-
