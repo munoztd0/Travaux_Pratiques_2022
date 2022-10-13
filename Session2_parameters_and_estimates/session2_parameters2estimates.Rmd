@@ -87,7 +87,7 @@ mySampleRes <- data.frame(mean=rep(0,size),
                           confintLow=rep(0,size),
                           confintHi=rep(0,size))
 
-mySampleRes # all rows are the same for now
+head(mySampleRes) # all rows are the same for now
 ```
 
 ```{r}
@@ -104,7 +104,7 @@ for (i in 1:size){
   mySampleRes$confintHi[i] <- mySampleRes$mean[i]+1.96*mySampleRes$se[i] #calculate the upper 95% confidence interval of this random sample
 }
 
-mySampleRes
+head(mySampleRes)
 
 
 # for reference:
@@ -156,7 +156,7 @@ Here we see the distribution of the means!
 Distribution of the means depends on the sample size.
 
 ```{r}
-
+library(patchwork)
 p_population <- ggplot()+
                 geom_histogram(data = data.frame(x = population),
                                aes(x=x),binwidth = .2)+
