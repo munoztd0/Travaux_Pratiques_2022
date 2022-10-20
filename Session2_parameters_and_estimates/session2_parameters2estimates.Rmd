@@ -1,6 +1,6 @@
 ---
 title: "Session 2: Parameters Estimate"
-subtitle: "Denis Mongin & David Munoz Tord"
+subtitle: "Your Name"
 date: "October 16, 2022"
 output:
   html_document:
@@ -157,6 +157,7 @@ Distribution of the means depends on the sample size.
 
 ```{r}
 library(patchwork)
+#install.packages('patchwork')
 p_population <- ggplot()+
                 geom_histogram(data = data.frame(x = population),
                                aes(x=x),binwidth = .2)+

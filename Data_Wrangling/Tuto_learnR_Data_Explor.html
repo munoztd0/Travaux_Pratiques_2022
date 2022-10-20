@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="David Munoz Tord" />
+
+
+<meta name="progressive" content="false" />
+<meta name="allow-skip" content="false" />
+<meta name="learnr-version-prerender" content="0.11.1" />
+
+<title>Introduction to Data Exploration with R</title>
+
+<!-- header-includes START -->
+<!-- HEAD_CONTENT -->
+<!-- header-includes END -->
+<!-- HEAD_CONTENT -->
+
+<!-- highlightjs -->
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+<!-- taken from https://github.com/rstudio/rmarkdown/blob/de8a9c38618903627ca509f5401d50a0876079f7/inst/rmd/h/default.html#L293-L343 -->
+<!-- tabsets -->
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+<!-- end tabsets -->
+
+
+</head>
+
+<body>
+<a class='sr-only sr-only-focusable visually-hidden-focusable' href='#learnr-tutorial-content'>Skip to Tutorial Content</a>
+
+
+
+<div class="pageContent band">
+<main class="bandContent page">
+
+<article class="topics" id="learnr-tutorial-content">
+
+<div id="section-looking-at-our-data" class="section level2">
+<h2>Looking at Our Data</h2>
+<p>Welcome to our introduction to R! I taught myself R using data that
+was personally interesting to me – hockey data. So in this tutorial,
+we’ll use a hockey data set of our own to explore some of the basic
+functions of the tidyverse (a set of packages that use a similar style)
+and learn some fundamentals for basic data exploration and
+manipulation.</p>
+<p>This data set is a small sample of games from the 2019-20 NHL season.
+Let’s go through some various methods to learn more about this data
+set.</p>
+<p><em>You can type and run your own code in these boxes. I’ll often
+give you some syntax to get started, and if you get stuck, you can hit
+the solution button. Don’t add any code to the code editor here, just
+press the Run Code button.</em></p>
+<div class="tutorial-exercise" data-label="glimpse" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code># This is an example of a comment! Lines that start with # aren&#39;t run as code.
+# You don&#39;t have to type anything else here.
+glimpse(hockey_data)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<p>Shown above is the <code>glimpse()</code> function. The bulk of the
+work in R is done with functions, which come from packages (as I
+mentioned, we’re working mainly with the tidyverse package in this
+tutorial). You call a function with its name, like we just did with
+<code>glimpse()</code>, followed by its arguments in parentheses. This
+function only has one argument, which is the name of the data set
+itself, <code>hockey_data</code>. You can also create your own
+functions, which is extremely useful but beyond the scope of this intro
+tutorial.</p>
+<p>The <code>glimpse()</code> function gives us a handy basic summary of
+our data. We know there are 2501 observations (or rows) and 46 variables
+(or columns), and we can see a little bit of the data. If we’re only
+interested in seeing all the variable names, we can call the
+<code>names()</code> function.</p>
+<p><em>The code block above used the <code>glimpse()</code> function.
+Here, try using the <code>names()</code> function, again with the name
+of the data set as the only argument.</em></p>
+<div class="tutorial-exercise" data-label="names" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="names-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>names(hockey_data)</code></pre>
+</div>
+<p>Those two functions are handy for knowing what’s in our data, but
+it’s often nice to just look at a sample of the raw data, as well. Try
+using the <code>head()</code> function.</p>
+<p><em>Use the <code>head()</code> function, again with the name of the
+data set as the only argument.</em></p>
+<div class="tutorial-exercise" data-label="head" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="head-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>head(hockey_data)</code></pre>
+</div>
+<p>The <code>head()</code> function will show, by default, the first six
+rows of our data frame. However, we can add an <strong>additional
+argument</strong> to this function to specify the number of rows. Lots
+of function arguments, like this one, are optional and aren’t necessary
+for the function to run but allow you to override the defaults and be
+more specific in what you want.</p>
+<p><em>Add <code>n = 10</code> as a second argument to this function,
+preceded by a comma after the name of the data set.</em></p>
+<div class="tutorial-exercise" data-label="head-2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>head(hockey_data)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="head-2-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>head(hockey_data, n = 10)</code></pre>
+</div>
+<p>Thanks to these functions, we can see that in our data, there is one
+row per tracked event (e.g., a faceoff or a goal or a line change) that
+provides details of that event: what time it occurred, which players
+were on the ice, etc. Important variables that we’re going to use going
+forward include <code>game_id</code>, <code>event_type</code>, and
+<code>event_player_1</code>.</p>
+</div>
+<div id="section-exploring-our-data" class="section level2">
+<h2>Exploring Our Data</h2>
+<p>Let’s experiment with a few more functions to answer some more
+questions about this data set. We know that the data set covers some
+games from the 2019-20 NHL season, and our functions in the previous
+section (<code>glimpse()</code>, <code>names()</code>, and
+<code>head()</code>) showed us the variable names and a few of the raw
+observations.</p>
+<p>One of our first questions might be: how many games are in this data
+set? We can use the handy <code>count()</code> function to figure this
+out, but which variable should we actually count? We can’t just count
+the total number of rows, as it’s obvious from viewing the output from
+the <code>head()</code> function that there are multiple rows per game.
+So this is where the concept of a unique identifier really comes in
+handy. In this data set, <code>game_id</code> is the unique identifier
+for each game.</p>
+<p><em>Use the <code>count()</code> function, which has two arguments,
+separated by a comma: the name of the data set
+(<code>hockey_data</code>) and the name of the variable being counted
+(<code>game_id</code>).</em></p>
+<div class="tutorial-exercise" data-label="count" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="count-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>count(hockey_data, game_id)</code></pre>
+</div>
+<p>We can see that this data set has four unique games, and each game
+has hundreds of events (or rows, or observations). A next natural
+question would be: when did these games take place, and which teams
+played in them?</p>
+<p><em>Start with the same <code>count()</code> function as above, but
+add three additional arguments: <code>game_date</code>,
+<code>home_team</code>, <code>away_team</code>.</em></p>
+<div class="tutorial-exercise" data-label="count-2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>count(hockey_data, game_id)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="count-2-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>count(hockey_data, game_id, game_date, home_team, away_team)</code></pre>
+</div>
+<p>From the output above, we can see that this data set contains four
+games, from late November 2019, that Philadelphia played against
+Carolina (CAR), Calgary (CGY), Vancouver (VAN), and Columbus (CBJ). Two
+of these were home games and two were away games.</p>
+<p>Next, let’s use <code>filter()</code>, one of the most useful
+functions in the tidyverse, to answer another question with this data:
+which players scored goals in these games? <code>filter()</code> keeps
+only certain rows (also known as observations) based on the criteria you
+specify, and to answer this question, we only want to keep rows that
+represent goals. That is, the <code>event_type</code> field will be
+equal to <code>GOAL</code>.</p>
+<p><em>Below, complete the <code>filter()</code> function so that the
+<code>event_type</code> variable is filtered only to the value of
+<code>GOAL</code>. (You’ll notice that the code uses a double equal
+sign. That is necessary when you’re testing for equality, like we’re
+doing here. When you’re creating and assigning variables, which we’ll
+discuss later, you only use one equal sign.)</em></p>
+<div class="tutorial-exercise" data-label="filter" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>filter(hockey_data, event_type == &quot;&quot;)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="filter-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>filter(hockey_data, event_type == &quot;GOAL&quot;)</code></pre>
+</div>
+<p>The output resulting from the code above appropriately filters our
+data set to show only the goal events, but there are still so many
+variables in the view that it’s not easy to answer our direct question
+of who scored these goals. To streamline this output, let’s try another
+tidyverse function: <code>select()</code>. While <code>filter()</code>
+keeps certain observations, <code>select()</code> keeps certain
+variables (columns). You can use <code>select()</code> to rearrange
+columns, keep certain columns, or drop certain columns. Here, we’ll use
+it to keep certain columns. (If we wanted instead to drop these columns
+and leave the rest, you would add a <code>-</code> in front.)</p>
+<p><em>The first argument of the <code>select()</code> function below is
+the name of the data set, <code>hockey_data</code>. You can add more
+arguments in order to select which columns you want. Here, only
+<code>event_type</code> is selected. Add two additional arguments,
+separated by commas, so that <code>event_team</code> and
+<code>event_player_1</code> (the player who scored the goal) are also
+selected.</em></p>
+<div class="tutorial-exercise" data-label="select" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>select(hockey_data, event_type)</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="select-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>select(hockey_data, event_type, event_team, event_player_1)</code></pre>
+</div>
+<p>This code works as we would expect, but of course, now our filtering
+is gone! In order to combine those two statements (asking R to
+<code>filter()</code> and <code>select()</code> in the same chunk of
+code), we need to introduce a new operator known as the pipe:
+<code>%&gt;%</code>. The pipe is extremely useful whenever you want to
+perform a sequence of steps on an object. Here, we can use the pipe to
+tell R which object we’re working with (our data frame,
+<code>hockey_data</code>, which means we <strong>don’t</strong> have to
+input that as a separate argument to every function) as well as which
+actions we want to perform (<code>filter()</code> and
+<code>select()</code>). The pipe evaluates each step in order and passes
+the result of each step on to the next.</p>
+<p><em>Below, the skeleton of the code is already written for you. Fill
+in the <code>filter()</code> and <code>select()</code> statements with
+the same arguments as in the previous two exercises. Note that when
+you’re using the pipe and starting with your object
+(<code>hockey_data</code> in this example), you do not need to add the
+name of the data frame as the first argument.</em></p>
+<div class="tutorial-exercise" data-label="pipe" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  select()</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="pipe-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;GOAL&quot;) %&gt;%
+  select(event_type, event_team, event_player_1)</code></pre>
+</div>
+<p>The output from the code above should show the 21 observations in
+this data set that have an <code>event_type</code> of <code>GOAL</code>,
+with the three variables that we added to our <code>select()</code>
+function.</p>
+<p>Next, let’s go over two other important tidyverse functions,
+<code>group_by()</code> and <code>summarize()</code>, which often work
+in combination. <code>group_by()</code> allows you to specify how data
+should be grouped, and <code>summarize()</code> can perform further
+actions on those groups separately. These functions are essential for
+aggregating your data for basic analysis (and are similar in theory to
+how a pivot table works in Excel).</p>
+<p>We can use these two functions to answer another question from this
+data: which team had the most shots on goal? Shots on goal (abbreviated
+as SOG) is a common hockey stat that includes goals as well as shots
+(i.e., shots on goal that the goalie saved). In order to capture two
+separate event types in our filter statement, goals and shots, we’ll
+have to use the <em>or</em> operator: <code>|</code> That will look like
+this: <code>filter(event_type == "GOAL" | event_type == "SHOT")</code>
+and will filter down to any observation that has an
+<code>event_type</code> of either <code>GOAL</code> or
+<code>SHOT</code>.</p>
+<p><em>In the code below, fill in the <code>filter()</code> statement as
+described above and add the <code>event_team</code> variable as an
+argument to the <code>group_by()</code> function.</em></p>
+<div class="tutorial-exercise" data-label="group" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  group_by() %&gt;%
+  summarize(shots_on_goal = n())</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="group-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;GOAL&quot; | event_type == &quot;SHOT&quot;) %&gt;%
+  group_by(event_team) %&gt;%
+  summarize(shots_on_goal = n())</code></pre>
+</div>
+<p>The code above filters the original data frame to just
+<code>SHOT</code> and <code>GOAL</code> observations and groups by the
+<code>event_team</code> variable. (The only variables that show in the
+output are those that are specified in <code>group_by()</code> and those
+that are created with <code>summarize()</code>.) Our
+<code>summarize()</code> function in this example is quite simple and
+just uses <code>n()</code> to create a new variable called
+<code>shots_on_goal</code> that counts the number of rows. (Since we’ve
+already used <code>filter()</code>, we know all that our observations
+are shots on goal.) There are many other function options you can use
+with <code>summarize()</code>, including <code>sum()</code>,
+<code>mean()</code>, and <code>max()</code>.</p>
+<p>You can also add more variables to the <code>group_by()</code>
+function to further slice your data. In the example above, we only
+grouped by <code>event_team</code>, but we can add <code>game_id</code>
+as well to see the shots on goal for each team in each game.</p>
+<p><em>In the code below, add the <code>game_id</code> variable as
+another argument to the <code>group_by()</code> function, separated by a
+comma.</em></p>
+<div class="tutorial-exercise" data-label="group-2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;GOAL&quot; | event_type == &quot;SHOT&quot;) %&gt;%
+  group_by(event_team) %&gt;%
+  summarize(shots_on_goal = n())</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="group-2-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;GOAL&quot; | event_type == &quot;SHOT&quot;) %&gt;%
+  group_by(event_team, game_id) %&gt;%
+  summarize(shots_on_goal = n())</code></pre>
+</div>
+<p>We can use yet another function called <code>arrange()</code> to sort
+this data, so we can more easily see which team had the most shots on
+goal in a game. The default sort order for the <code>arrange()</code>
+function is ascending, so if you want the order to be descending, you
+need to use the <code>desc()</code> function within the
+<code>arrange()</code> function. That will look like this:
+<code>arrange(desc(shots_on_goal))</code>.</p>
+<p><em>In the code below, add another line at the bottom (don’t forget
+the pipe!) with the <code>arrange()</code> function, as described
+above.</em></p>
+<div class="tutorial-exercise" data-label="arrange" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;GOAL&quot; | event_type == &quot;SHOT&quot;) %&gt;%
+  group_by(event_team, game_id) %&gt;%
+  summarize(shots_on_goal = n())</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="arrange-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;GOAL&quot; | event_type == &quot;SHOT&quot;) %&gt;%
+  group_by(event_team, game_id) %&gt;%
+  summarize(shots_on_goal = n()) %&gt;%
+  arrange(desc(shots_on_goal))</code></pre>
+</div>
+</div>
+<div id="section-manipulating-our-data" class="section level2">
+<h2>Manipulating Our Data</h2>
+<p>So far we’ve looked at our data, using functions like
+<code>glimpse()</code> and <code>head()</code>, and have also started to
+explore it further using functions like <code>filter()</code>,
+<code>select()</code>, <code>group_by()</code>,
+<code>summarize()</code>, and <code>arrange()</code>. In this section,
+we can continue to <em>manipulate</em> our data set and make more
+changes to it. We’ve already seen that you can create variables with the
+<code>group_by()</code> and <code>summarize()</code> function
+combination (like we did in the previous section with our
+<code>shots_on_goal</code> variable), but in this section we’ll explore
+the <code>mutate()</code> function to easily create new variables.</p>
+<p>Usually, the new variables you want to create will be based on values
+of your existing variables. So in order to create them, we need to use a
+conditional statement function like <code>ifelse()</code> within our
+<code>mutate()</code> function. (There’s another function called
+<code>case_when()</code> that is often more elegant to use if you have
+multiple conditions. We’ll go over an example using
+<code>case_when()</code> later in this section.)</p>
+<p>Let’s work through a series of examples in order to answer another
+question about this data: in these four games, what were the players’
+shooting percentages? We’ve already discussed shots on goal (which are
+all events that have an <code>event_type</code> of <code>SHOT</code> or
+<code>GOAL</code>), and a skater’s shooting percentage is simply the
+number of goals divided by the total number of shots on goal. To start,
+we need a <code>shot_on_goal</code> variable that will act as the
+denominator of that calculation. That is, we need a new variable that
+will equal 1 if the event is a <code>SHOT</code> or a <code>GOAL</code>.
+To do this, we’ll use <code>ifelse()</code> and
+<code>mutate()</code>.</p>
+<p>The <code>ifelse()</code> function has three main arguments: the
+conditional statement, the value of the variable if the condition is
+true, and the value of the variable if the condition is false. Here, in
+the code below, we’ll create this new <code>shot_on_goal</code> variable
+in order to more easily find the shooting percentage for our skaters.
+(Within the <code>mutate()</code> function below, you’ll notice both
+types of equal signs. We use a single equal sign to assign the variable
+<code>shot_on_goal</code> but a double equal sign to test for equality
+in our <code>ifelse()</code> statement.)</p>
+<p><em>In the code below, the <code>mutate()</code> function is already
+set: we’re creating a new variable called <code>shot_on_goal</code> that
+equals 1 if the <code>event_type</code> is <code>SHOT</code> or
+<code>GOAL</code> and equals 0 if it is not. For this exercise, we’re
+only interested in the Philadelphia players (as they’ve played the most
+games), so in the <code>filter()</code> statement, set
+<code>event_team</code> equal to “PHI”. Also, fill in the
+<code>select()</code> function with the following variables: game_id,
+event_player_1, event_type.</em></p>
+<div class="tutorial-exercise" data-label="mutate" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  select() %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0))</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="mutate-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0))</code></pre>
+</div>
+<p>You might have to page through a couple pages of output above to find
+a <code>shot_on_goal</code> that equals 1, but that should be true for
+every <code>event_type</code> of <code>SHOT</code> or <code>GOAL.</code>
+And now that we’ve identified the shots on goal (i.e., the denominator
+of the shooting percentage fraction), but we can separate out the goal
+events in order to get the numerator.</p>
+<p>You can create multiple variables within the <code>mutate()</code>
+function, as you can see below, just separate them with a comma (and
+it’s common convention to put each variable on a separate line for
+better readability).</p>
+<p><em>In the code below, fill in the appropriate <code>ifelse()</code>
+statement to create a <code>goal</code> variable that equals 1 if the
+<code>event_type</code> is <code>GOAL</code> and 0 if it is
+not.</em></p>
+<div class="tutorial-exercise" data-label="mutate-2" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+         goal = )</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="mutate-2-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+         goal = ifelse(event_type == &quot;GOAL&quot;, 1, 0))</code></pre>
+</div>
+<p>And now that we have the goals identified, as well as the shots on
+goal, we can return to our familiar <code>group_by()</code> and
+<code>summarize()</code> functions in order to find the sums of these
+two new variables for each player.</p>
+<p><em>In the code below, fill out the <code>group_by()</code> and
+<code>summarize()</code> functions. Our <code>group_by()</code> variable
+will be <code>event_player_1</code>, and our two variables created with
+<code>summarize()</code> will take the <code>sum()</code> of the two
+variables we created with <code>mutate()</code>,
+<code>shot_on_goal</code> and <code>goal</code>. Lastly, complete the
+<code>filter()</code> function such that our new
+<code>sum_shots_on_goal</code> variable is greater than zero.</em></p>
+<div class="tutorial-exercise" data-label="mutate-3" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+         goal = ifelse(event_type == &quot;GOAL&quot;, 1, 0)) %&gt;%
+  group_by() %&gt;%
+  summarize(sum_shots_on_goal = ,
+            sum_goals = ) %&gt;%
+  filter()</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="mutate-3-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+         goal = ifelse(event_type == &quot;GOAL&quot;, 1, 0)) %&gt;%
+  group_by(event_player_1) %&gt;%
+  summarize(sum_shots_on_goal = sum(shot_on_goal),
+            sum_goals = sum(goal)) %&gt;%
+  filter(sum_shots_on_goal &gt; 0)</code></pre>
+</div>
+<p>You can see from the output above that now we have a row per player
+(<code>event_player_1</code>), for each player that has at least one
+shot on goal. Our last step in this example is to use
+<code>mutate()</code> again and create our shooting percentage.</p>
+<p><em>In the code below, complete the <code>mutate()</code> function to
+create the new <code>sh_perc</code> variable, which is
+<code>sum_goals</code> divided by <code>sum_shots_on_goal</code>:
+<code>sum_goals / sum_shots_on_goal</code>.</em></p>
+<div class="tutorial-exercise" data-label="mutate-4" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+         goal = ifelse(event_type == &quot;GOAL&quot;, 1, 0)) %&gt;%
+  group_by(event_player_1) %&gt;%
+  summarize(sum_shots_on_goal = sum(shot_on_goal),
+            sum_goals = sum(goal)) %&gt;%
+  filter(sum_shots_on_goal &gt; 0) %&gt;%
+  mutate(sh_perc = )</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="mutate-4-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_team == &quot;PHI&quot;) %&gt;%
+  select(game_id, event_player_1, event_type) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+         goal = ifelse(event_type == &quot;GOAL&quot;, 1, 0)) %&gt;%
+  group_by(event_player_1) %&gt;%
+  summarize(sum_shots_on_goal = sum(shot_on_goal),
+            sum_goals = sum(goal)) %&gt;%
+  filter(sum_shots_on_goal &gt; 0) %&gt;%
+  mutate(sh_perc = sum_goals / sum_shots_on_goal)</code></pre>
+</div>
+<p>And now we can see the shooting percentage for each player. You could
+also use the <code>arrange()</code> function, like we saw in the last
+section, to sort this data: <code>arrange(desc(sh_perc))</code>. And if
+you wanted to see this decimal expressed as a percentage, you could use
+the <code>round()</code> function within <code>mutate()</code>:
+<code>mutate(sh_perc = round((sum_goals / sum_shots_on_goal) * 100, 2))</code>.</p>
+<p>Let’s go through one last example using the combination of
+<code>group_by()</code>, <code>summarize()</code>, and
+<code>mutate()</code> to answer another question: which games ended in
+regulation and which did not? A regulation NHL game has three periods,
+and the period of each event in this data set is described by the
+<code>game_period</code> variable. For data recording purposes, overtime
+has a value of 4 for <code>game_period</code> and the shootout has a
+value of 5.</p>
+<p>So in order to figure out whether each game ended in regulation,
+overtime, or a shootout, we can group our data per game and use the
+<code>max()</code> function within <code>summarize()</code> to figure
+out the maximum value of <code>game_period</code>.</p>
+<p><em>In the code below, add <code>game_id</code> to the
+<code>group_by()</code> function and in <code>summarize()</code>, find
+the <code>max()</code> of <code>game_period</code>.</em></p>
+<div class="tutorial-exercise" data-label="regulation-1"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  group_by() %&gt;%
+  summarize(max_period = )</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support"
+data-label="regulation-1-solution" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  group_by(game_id) %&gt;%
+  summarize(max_period = max(game_period))</code></pre>
+</div>
+<p>We can see from the value of <code>max_period</code> in the output
+above that three of these games ended in regulation and one went to the
+shootout. What if we wanted to create a new variable,
+<code>game_type</code> that specified this? We could use multiple
+<code>ifelse()</code> statements within our <code>mutate()</code>
+function, or since we have multiple conditions, we can try
+<code>case_when()</code>. As we briefly discussed at the beginning of
+this section, <code>case_when()</code> is often easier to write (and
+read) when there are multiple conditions.</p>
+<p>The syntax of <code>case_when()</code> starts with the condition
+(such as <code>max_period == 3</code>) and then has the value <em>if
+true</em> after a tilde. Each condition is separated by a comma and is
+usually on a new line for better readability.</p>
+<p><em>Fill in the rest of the syntax for the <code>case_when()</code>
+statement below. A <code>max_period</code> of 4 will equal “overtime”
+and 5 will equal “shootout.”</em></p>
+<div class="tutorial-exercise" data-label="regulation"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  group_by(game_id) %&gt;%
+  summarize(max_period = max(game_period)) %&gt;%
+  mutate(game_type = case_when(max_period == 3 ~ &quot;regulation&quot;,
+                               
+                               ))</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="regulation-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  group_by(game_id) %&gt;%
+  summarize(max_period = max(game_period)) %&gt;%
+  mutate(game_type = case_when(max_period == 3 ~ &quot;regulation&quot;,
+                               max_period == 4 ~ &quot;overtime&quot;,
+                               max_period == 5 ~ &quot;shootout&quot;))</code></pre>
+</div>
+<p>In this introduction, we’ve explored and manipulated our data with
+the help of some of the most common <code>tidyverse</code> functions:
+<code>filter()</code>, <code>select()</code>, <code>group_by()</code>,
+<code>summarize()</code>, and <code>mutate()</code>. Continue on to the
+next section in order to practice these functions with a selection of
+exercises!</p>
+</div>
+<div id="section-exercises" class="section level2">
+<h2>Exercises</h2>
+<p>In each of the exercises below, I’ve provided some of the syntax as a
+guide. You can erase the starting code if you’d rather start from
+scratch, and if you get stuck, just click the solution button.</p>
+<div id="section-exercise-1" class="section level3">
+<h3>Exercise 1</h3>
+<p>In the previous section, we found the shooting percentage per player.
+In the exercise below, find the shooting percentage per team per game,
+at 5v5 only. (Hint: the variable of interest for the filter is
+<code>game_strength_state</code>.)</p>
+<div class="tutorial-exercise" data-label="shperc" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  mutate(shot_on_goal = ,
+          goal = ) %&gt;%
+  group_by() %&gt;%
+  summarize(sum_shots_on_goal = ,
+            sum_goals = ) %&gt;%
+  filter(sum_shots_on_goal &gt; 0) %&gt;%
+  mutate(sh_perc = )</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="shperc-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(game_strength_state == &quot;5v5&quot;) %&gt;%
+  mutate(shot_on_goal = ifelse(event_type == &quot;SHOT&quot; | event_type == &quot;GOAL&quot;, 1, 0),
+          goal = ifelse(event_type == &quot;GOAL&quot;, 1, 0)) %&gt;%
+  group_by(game_id, event_team) %&gt;%
+  summarize(sum_shots_on_goal = sum(shot_on_goal),
+            sum_goals = sum(goal)) %&gt;%
+  filter(sum_shots_on_goal &gt; 0) %&gt;%
+  mutate(sh_perc = sum_goals / sum_shots_on_goal)</code></pre>
+</div>
+</div>
+<div id="section-exercise-2" class="section level3">
+<h3>Exercise 2</h3>
+<p>Which team won each game? (Hint: use the <code>home_score</code> and
+<code>away_score</code> variables and add <code>home_team</code> and
+<code>away_team</code> to <code>group_by()</code>.)</p>
+<div class="tutorial-exercise" data-label="standings"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  group_by() %&gt;%
+  summarize(max_home_score = ,
+            max_away_score = ) %&gt;%
+  mutate(winning_team = ifelse())</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="standings-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  group_by(game_id, home_team, away_team) %&gt;%
+  summarize(max_home_score = max(home_score),
+            max_away_score = max(away_score)) %&gt;%
+  mutate(winning_team = ifelse(max_home_score &gt; max_away_score, home_team, away_team))</code></pre>
+</div>
+</div>
+<div id="section-exercise-3" class="section level3">
+<h3>Exercise 3</h3>
+<p>What was the faceoff win percentage for Philadelphia in each game?
+(Hint: the <code>event_type</code> for faceoffs is <code>FAC</code>, and
+the faceoff win percentage is the number of faceoff wins divided by the
+total number of faceoffs. Whichever team is listed as the
+<code>event_team</code> for the faceoff event is the team that won the
+faceoff.)</p>
+<div class="tutorial-exercise" data-label="faceoff" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  mutate(PHI_FO_win = ifelse() %&gt;%
+  group_by(game_id) %&gt;%
+  summarize(FO_wins = ,
+            FO_total = n()) %&gt;%
+  mutate(FO_win_perc = )</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="faceoff-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;FAC&quot;) %&gt;%
+  mutate(PHI_FO_win = ifelse(event_team == &quot;PHI&quot;, 1, 0)) %&gt;%
+  group_by(game_id) %&gt;%
+  summarize(FO_wins = sum(PHI_FO_win),
+            FO_total = n()) %&gt;%
+  mutate(FO_win_perc = FO_wins / FO_total)</code></pre>
+</div>
+</div>
+<div id="section-exercise-4" class="section level3">
+<h3>Exercise 4</h3>
+<p>How many shot attempts did each player get? A shot attempt is any
+observation with an <code>event_type</code> of <code>GOAL</code>,
+<code>SHOT</code>, <code>MISS</code>, or <code>BLOCK</code>. It quickly
+gets unwieldy writing out a lot of “or” statements, so we can also use a
+handy <code>%in%</code> operator:
+<code>filter(event_type %in% c("SHOT", "BLOCK", "MISS", "GOAL"))</code>.
+The <code>c()</code> function just indicates that we’re creating a
+vector.</p>
+<p>(Hint: We could use the <code>group_by()</code> and
+<code>summarize()</code> combo, but in simple sums like this where we’re
+filtering our data set down to all our observations of interest, it’s
+often easier to just use <code>count()</code>. Adding
+<code>sort = TRUE</code> as a second argument to the
+<code>count()</code> function will sort them in descending order.)</p>
+<div class="tutorial-exercise" data-label="corsi" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  count()</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="corsi-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type %in% c(&quot;SHOT&quot;, &quot;BLOCK&quot;, &quot;MISS&quot;, &quot;GOAL&quot;)) %&gt;%
+  count(event_player_1, sort = TRUE)</code></pre>
+</div>
+</div>
+<div id="section-exercise-5" class="section level3">
+<h3>Exercise 5</h3>
+<p>Which player <em>drew</em> the most penalties? (Hint:
+<code>event_player_2</code> is the variable that contains the player who
+drew the penalty, and the <code>event_type</code> for a penalty is
+<code>PENL</code>.)</p>
+<div class="tutorial-exercise" data-label="penalty" data-completion="1"
+data-diagnostics="1" data-startover="1" data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter() %&gt;%
+  count()</code></pre>
+<script type="application/json" data-ui-opts="1">{"engine":"r","has_checker":false,"caption":"betweenthepipes"}</script>
+</div>
+<div class="tutorial-exercise-support" data-label="penalty-solution"
+data-completion="1" data-diagnostics="1" data-startover="1"
+data-lines="0">
+<pre class="text"><code>hockey_data %&gt;%
+  filter(event_type == &quot;PENL&quot;) %&gt;%
+  count(event_player_2, sort = TRUE)</code></pre>
+</div>
+<p>
+<script type="application/shiny-prerendered" data-context="server-start">
+library(learnr)
+library(dplyr)
+library(readr)
+library(magrittr)
+library(knitr)
+knitr::opts_chunk$set(echo = FALSE)
+hockey_data <- read_csv("data/PHI_tutorial_data.csv")
+tutorial_options(exercise.cap = "betweenthepipes")
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::register_http_handlers(session, metadata = NULL)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::prepare_tutorial_state(session)
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::i18n_observe_tutorial_language(input, session)
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+session$onSessionEnded(function() {
+        learnr:::event_trigger(session, "session_stop")
+      })
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-glimpse-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-glimpse-code-editor`)), session)
+output$`tutorial-exercise-glimpse-output` <- renderUI({
+  `tutorial-exercise-glimpse-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "glimpse", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "glimpse", code = "# This is an example of a comment! Lines that start with # aren't run as code.\n# You don't have to type anything else here.\nglimpse(hockey_data)", 
+        opts = list(label = "\"glimpse\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = NULL, tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "glimpse", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("# This is an example of a comment! Lines that start with # aren't run as code.", 
+        "# You don't have to type anything else here.", "glimpse(hockey_data)"
+        ), out.width.px = 624, out.height.px = 384, params.src = "glimpse, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-names-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-names-code-editor`)), session)
+output$`tutorial-exercise-names-output` <- renderUI({
+  `tutorial-exercise-names-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "names", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "names", code = "", opts = list(label = "\"names\"", 
+        exercise = "TRUE", exercise.eval = "FALSE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure("names(hockey_data)", chunk_opts = list(
+        label = "names-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "names", 
+        exercise = TRUE, exercise.eval = FALSE, code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "names, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-head-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-head-code-editor`)), session)
+output$`tutorial-exercise-head-output` <- renderUI({
+  `tutorial-exercise-head-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "head", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "head", code = "", opts = list(label = "\"head\"", 
+        exercise = "TRUE", exercise.eval = "FALSE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure("head(hockey_data)", chunk_opts = list(
+        label = "head-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "head", 
+        exercise = TRUE, exercise.eval = FALSE, code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "head, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-head-2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-head-2-code-editor`)), session)
+output$`tutorial-exercise-head-2-output` <- renderUI({
+  `tutorial-exercise-head-2-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "head-2", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "head-2", code = "head(hockey_data)", opts = list(
+        label = "\"head-2\"", exercise = "TRUE", exercise.eval = "FALSE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure("head(hockey_data, n = 10)", chunk_opts = list(
+        label = "head-2-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "head-2", 
+        exercise = TRUE, exercise.eval = FALSE, code = "head(hockey_data)", 
+        out.width.px = 624, out.height.px = 384, params.src = "head-2, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-count-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-count-code-editor`)), session)
+output$`tutorial-exercise-count-output` <- renderUI({
+  `tutorial-exercise-count-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "count", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "count", code = "", opts = list(label = "\"count\"", 
+        exercise = "TRUE", exercise.eval = "FALSE"), engine = "r")), 
+    code_check = NULL, error_check = NULL, check = NULL, solution = structure("count(hockey_data, game_id)", chunk_opts = list(
+        label = "count-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "count", 
+        exercise = TRUE, exercise.eval = FALSE, code = "", out.width.px = 624, 
+        out.height.px = 384, params.src = "count, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0L, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-count-2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-count-2-code-editor`)), session)
+output$`tutorial-exercise-count-2-output` <- renderUI({
+  `tutorial-exercise-count-2-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "count-2", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "count-2", code = "count(hockey_data, game_id)", 
+        opts = list(label = "\"count-2\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure("count(hockey_data, game_id, game_date, home_team, away_team)", chunk_opts = list(
+        label = "count-2-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "count-2", 
+        exercise = TRUE, exercise.eval = FALSE, code = "count(hockey_data, game_id)", 
+        out.width.px = 624, out.height.px = 384, params.src = "count-2, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-filter-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-filter-code-editor`)), session)
+output$`tutorial-exercise-filter-output` <- renderUI({
+  `tutorial-exercise-filter-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "filter", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "filter", code = "filter(hockey_data, event_type == \"\")", 
+        opts = list(label = "\"filter\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure("filter(hockey_data, event_type == \"GOAL\")", chunk_opts = list(
+        label = "filter-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "filter", 
+        exercise = TRUE, exercise.eval = FALSE, code = "filter(hockey_data, event_type == \"\")", 
+        out.width.px = 624, out.height.px = 384, params.src = "filter, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-select-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-select-code-editor`)), session)
+output$`tutorial-exercise-select-output` <- renderUI({
+  `tutorial-exercise-select-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "select", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "select", code = "select(hockey_data, event_type)", 
+        opts = list(label = "\"select\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure("select(hockey_data, event_type, event_team, event_player_1)", chunk_opts = list(
+        label = "select-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "select", 
+        exercise = TRUE, exercise.eval = FALSE, code = "select(hockey_data, event_type)", 
+        out.width.px = 624, out.height.px = 384, params.src = "select, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-pipe-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-pipe-code-editor`)), session)
+output$`tutorial-exercise-pipe-output` <- renderUI({
+  `tutorial-exercise-pipe-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "pipe", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "pipe", code = "hockey_data %>%\n  filter() %>%\n  select()", 
+        opts = list(label = "\"pipe\"", exercise = "TRUE", exercise.eval = "FALSE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("hockey_data %>%", "  filter(event_type == \"GOAL\") %>%", 
+    "  select(event_type, event_team, event_player_1)"), chunk_opts = list(
+        label = "pipe-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "pipe", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  select()"), out.width.px = 624, 
+        out.height.px = 384, params.src = "pipe, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-group-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-group-code-editor`)), session)
+output$`tutorial-exercise-group-output` <- renderUI({
+  `tutorial-exercise-group-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "group", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "group", code = "hockey_data %>%\n  filter() %>%\n  group_by() %>%\n  summarize(shots_on_goal = n())", 
+        opts = list(label = "\"group\"", exercise = "TRUE", exercise.eval = "FALSE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("hockey_data %>%", "  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%", 
+    "  group_by(event_team) %>%", "  summarize(shots_on_goal = n())"
+    ), chunk_opts = list(label = "group-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "group", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  group_by() %>%", "  summarize(shots_on_goal = n())"
+        ), out.width.px = 624, out.height.px = 384, params.src = "group, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-group-2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-group-2-code-editor`)), session)
+output$`tutorial-exercise-group-2-output` <- renderUI({
+  `tutorial-exercise-group-2-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "group-2", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "group-2", code = "hockey_data %>%\n  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%\n  group_by(event_team) %>%\n  summarize(shots_on_goal = n())", 
+        opts = list(label = "\"group-2\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%", 
+    "  group_by(event_team, game_id) %>%", "  summarize(shots_on_goal = n())"
+    ), chunk_opts = list(label = "group-2-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "group-2", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%", 
+        "  group_by(event_team) %>%", "  summarize(shots_on_goal = n())"
+        ), out.width.px = 624, out.height.px = 384, params.src = "group-2, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-arrange-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-arrange-code-editor`)), session)
+output$`tutorial-exercise-arrange-output` <- renderUI({
+  `tutorial-exercise-arrange-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "arrange", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "arrange", code = "hockey_data %>%\n  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%\n  group_by(event_team, game_id) %>%\n  summarize(shots_on_goal = n())", 
+        opts = list(label = "\"arrange\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%", 
+    "  group_by(event_team, game_id) %>%", "  summarize(shots_on_goal = n()) %>%", 
+    "  arrange(desc(shots_on_goal))"), chunk_opts = list(label = "arrange-solution")), 
+    tests = NULL, options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "arrange", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter(event_type == \"GOAL\" | event_type == \"SHOT\") %>%", 
+        "  group_by(event_team, game_id) %>%", "  summarize(shots_on_goal = n())"
+        ), out.width.px = 624, out.height.px = 384, params.src = "arrange, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-mutate-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-mutate-code-editor`)), session)
+output$`tutorial-exercise-mutate-output` <- renderUI({
+  `tutorial-exercise-mutate-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "mutate", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "mutate", code = "hockey_data %>%\n  filter() %>%\n  select() %>%\n  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0))", 
+        opts = list(label = "\"mutate\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+    "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0))"
+    ), chunk_opts = list(label = "mutate-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "mutate", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  select() %>%", "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0))"
+        ), out.width.px = 624, out.height.px = 384, params.src = "mutate, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-mutate-2-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-mutate-2-code-editor`)), session)
+output$`tutorial-exercise-mutate-2-output` <- renderUI({
+  `tutorial-exercise-mutate-2-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "mutate-2", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "mutate-2", code = "hockey_data %>%\n  filter(event_team == \"PHI\") %>%\n  select(game_id, event_player_1, event_type) %>%\n  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),\n         goal = )", 
+        opts = list(label = "\"mutate-2\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+    "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+    "         goal = ifelse(event_type == \"GOAL\", 1, 0))"), chunk_opts = list(
+        label = "mutate-2-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "mutate-2", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+        "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+        "         goal = )"), out.width.px = 624, out.height.px = 384, 
+        params.src = "mutate-2, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-mutate-3-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-mutate-3-code-editor`)), session)
+output$`tutorial-exercise-mutate-3-output` <- renderUI({
+  `tutorial-exercise-mutate-3-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "mutate-3", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "mutate-3", code = "hockey_data %>%\n  filter(event_team == \"PHI\") %>%\n  select(game_id, event_player_1, event_type) %>%\n  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),\n         goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%\n  group_by() %>%\n  summarize(sum_shots_on_goal = ,\n            sum_goals = ) %>%\n  filter()", 
+        opts = list(label = "\"mutate-3\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+    "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+    "         goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%", 
+    "  group_by(event_player_1) %>%", "  summarize(sum_shots_on_goal = sum(shot_on_goal),", 
+    "            sum_goals = sum(goal)) %>%", "  filter(sum_shots_on_goal > 0)"
+    ), chunk_opts = list(label = "mutate-3-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "mutate-3", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+        "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+        "         goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%", 
+        "  group_by() %>%", "  summarize(sum_shots_on_goal = ,", 
+        "            sum_goals = ) %>%", "  filter()"), out.width.px = 624, 
+        out.height.px = 384, params.src = "mutate-3, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-mutate-4-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-mutate-4-code-editor`)), session)
+output$`tutorial-exercise-mutate-4-output` <- renderUI({
+  `tutorial-exercise-mutate-4-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "mutate-4", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "mutate-4", code = "hockey_data %>%\n  filter(event_team == \"PHI\") %>%\n  select(game_id, event_player_1, event_type) %>%\n  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),\n         goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%\n  group_by(event_player_1) %>%\n  summarize(sum_shots_on_goal = sum(shot_on_goal),\n            sum_goals = sum(goal)) %>%\n  filter(sum_shots_on_goal > 0) %>%\n  mutate(sh_perc = )", 
+        opts = list(label = "\"mutate-4\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+    "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+    "         goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%", 
+    "  group_by(event_player_1) %>%", "  summarize(sum_shots_on_goal = sum(shot_on_goal),", 
+    "            sum_goals = sum(goal)) %>%", "  filter(sum_shots_on_goal > 0) %>%", 
+    "  mutate(sh_perc = sum_goals / sum_shots_on_goal)"), chunk_opts = list(
+        label = "mutate-4-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "mutate-4", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter(event_team == \"PHI\") %>%", "  select(game_id, event_player_1, event_type) %>%", 
+        "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+        "         goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%", 
+        "  group_by(event_player_1) %>%", "  summarize(sum_shots_on_goal = sum(shot_on_goal),", 
+        "            sum_goals = sum(goal)) %>%", "  filter(sum_shots_on_goal > 0) %>%", 
+        "  mutate(sh_perc = )"), out.width.px = 624, out.height.px = 384, 
+        params.src = "mutate-4, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-regulation-1-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-regulation-1-code-editor`)), session)
+output$`tutorial-exercise-regulation-1-output` <- renderUI({
+  `tutorial-exercise-regulation-1-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "regulation-1", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "regulation-1", code = "hockey_data %>%\n  group_by() %>%\n  summarize(max_period = )", 
+        opts = list(label = "\"regulation-1\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  group_by(game_id) %>%", "  summarize(max_period = max(game_period))"
+    ), chunk_opts = list(label = "regulation-1-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "regulation-1", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  group_by() %>%", "  summarize(max_period = )"), out.width.px = 624, 
+        out.height.px = 384, params.src = "regulation-1, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-regulation-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-regulation-code-editor`)), session)
+output$`tutorial-exercise-regulation-output` <- renderUI({
+  `tutorial-exercise-regulation-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "regulation", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "regulation", code = "hockey_data %>%\n  group_by(game_id) %>%\n  summarize(max_period = max(game_period)) %>%\n  mutate(game_type = case_when(max_period == 3 ~ \"regulation\",\n                               \n                               ))", 
+        opts = list(label = "\"regulation\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  group_by(game_id) %>%", "  summarize(max_period = max(game_period)) %>%", 
+    "  mutate(game_type = case_when(max_period == 3 ~ \"regulation\",", 
+    "                               max_period == 4 ~ \"overtime\",", 
+    "                               max_period == 5 ~ \"shootout\"))"
+    ), chunk_opts = list(label = "regulation-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "regulation", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  group_by(game_id) %>%", "  summarize(max_period = max(game_period)) %>%", 
+        "  mutate(game_type = case_when(max_period == 3 ~ \"regulation\",", 
+        "                               ", "                               ))"
+        ), out.width.px = 624, out.height.px = 384, params.src = "regulation, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-shperc-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-shperc-code-editor`)), session)
+output$`tutorial-exercise-shperc-output` <- renderUI({
+  `tutorial-exercise-shperc-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "shperc", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "shperc", code = "hockey_data %>%\n  filter() %>%\n  mutate(shot_on_goal = ,\n          goal = ) %>%\n  group_by() %>%\n  summarize(sum_shots_on_goal = ,\n            sum_goals = ) %>%\n  filter(sum_shots_on_goal > 0) %>%\n  mutate(sh_perc = )", 
+        opts = list(label = "\"shperc\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(game_strength_state == \"5v5\") %>%", "  mutate(shot_on_goal = ifelse(event_type == \"SHOT\" | event_type == \"GOAL\", 1, 0),", 
+    "          goal = ifelse(event_type == \"GOAL\", 1, 0)) %>%", 
+    "  group_by(game_id, event_team) %>%", "  summarize(sum_shots_on_goal = sum(shot_on_goal),", 
+    "            sum_goals = sum(goal)) %>%", "  filter(sum_shots_on_goal > 0) %>%", 
+    "  mutate(sh_perc = sum_goals / sum_shots_on_goal)"), chunk_opts = list(
+        label = "shperc-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "shperc", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  mutate(shot_on_goal = ,", "          goal = ) %>%", 
+        "  group_by() %>%", "  summarize(sum_shots_on_goal = ,", 
+        "            sum_goals = ) %>%", "  filter(sum_shots_on_goal > 0) %>%", 
+        "  mutate(sh_perc = )"), out.width.px = 624, out.height.px = 384, 
+        params.src = "shperc, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-standings-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-standings-code-editor`)), session)
+output$`tutorial-exercise-standings-output` <- renderUI({
+  `tutorial-exercise-standings-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "standings", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "standings", code = "hockey_data %>%\n  group_by() %>%\n  summarize(max_home_score = ,\n            max_away_score = ) %>%\n  mutate(winning_team = ifelse())", 
+        opts = list(label = "\"standings\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  group_by(game_id, home_team, away_team) %>%", "  summarize(max_home_score = max(home_score),", 
+    "            max_away_score = max(away_score)) %>%", "  mutate(winning_team = ifelse(max_home_score > max_away_score, home_team, away_team))"
+    ), chunk_opts = list(label = "standings-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "standings", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  group_by() %>%", "  summarize(max_home_score = ,", 
+        "            max_away_score = ) %>%", "  mutate(winning_team = ifelse())"
+        ), out.width.px = 624, out.height.px = 384, params.src = "standings, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-faceoff-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-faceoff-code-editor`)), session)
+output$`tutorial-exercise-faceoff-output` <- renderUI({
+  `tutorial-exercise-faceoff-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "faceoff", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "faceoff", code = "hockey_data %>%\n  filter() %>%\n  mutate(PHI_FO_win = ifelse() %>%\n  group_by(game_id) %>%\n  summarize(FO_wins = ,\n            FO_total = n()) %>%\n  mutate(FO_win_perc = )", 
+        opts = list(label = "\"faceoff\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_type == \"FAC\") %>%", "  mutate(PHI_FO_win = ifelse(event_team == \"PHI\", 1, 0)) %>%", 
+    "  group_by(game_id) %>%", "  summarize(FO_wins = sum(PHI_FO_win),", 
+    "            FO_total = n()) %>%", "  mutate(FO_win_perc = FO_wins / FO_total)"
+    ), chunk_opts = list(label = "faceoff-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "faceoff", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  mutate(PHI_FO_win = ifelse() %>%", 
+        "  group_by(game_id) %>%", "  summarize(FO_wins = ,", 
+        "            FO_total = n()) %>%", "  mutate(FO_win_perc = )"
+        ), out.width.px = 624, out.height.px = 384, params.src = "faceoff, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-corsi-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-corsi-code-editor`)), session)
+output$`tutorial-exercise-corsi-output` <- renderUI({
+  `tutorial-exercise-corsi-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "corsi", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "corsi", code = "hockey_data %>%\n  filter() %>%\n  count()", 
+        opts = list(label = "\"corsi\"", exercise = "TRUE", exercise.eval = "FALSE"), 
+        engine = "r")), code_check = NULL, error_check = NULL, 
+    check = NULL, solution = structure(c("hockey_data %>%", "  filter(event_type %in% c(\"SHOT\", \"BLOCK\", \"MISS\", \"GOAL\")) %>%", 
+    "  count(event_player_1, sort = TRUE)"), chunk_opts = list(
+        label = "corsi-solution")), tests = NULL, options = list(
+        eval = FALSE, echo = TRUE, results = "markup", tidy = FALSE, 
+        tidy.opts = NULL, collapse = FALSE, prompt = FALSE, comment = NA, 
+        highlight = FALSE, size = "normalsize", background = "#F7F7F7", 
+        strip.white = TRUE, cache = 0, cache.path = "Tuto_learnR_Data_Explor_cache/html/", 
+        cache.vars = NULL, cache.lazy = TRUE, dependson = NULL, 
+        autodep = FALSE, cache.rebuild = FALSE, fig.keep = "high", 
+        fig.show = "asis", fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "corsi", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  count()"), out.width.px = 624, out.height.px = 384, 
+        params.src = "corsi, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+ 
+<script type="application/shiny-prerendered" data-context="server">
+`tutorial-exercise-penalty-result` <- learnr:::setup_exercise_handler(reactive(req(input$`tutorial-exercise-penalty-code-editor`)), session)
+output$`tutorial-exercise-penalty-output` <- renderUI({
+  `tutorial-exercise-penalty-result`()
+})
+</script>
+
+
+<script type="application/shiny-prerendered" data-context="server">
+learnr:::store_exercise_cache(structure(list(label = "penalty", global_setup = structure(c("library(learnr)", 
+"library(dplyr)", "library(readr)", "library(magrittr)", "library(knitr)", 
+"knitr::opts_chunk$set(echo = FALSE)", "hockey_data <- read_csv(\"data/PHI_tutorial_data.csv\")", 
+"tutorial_options(exercise.cap = \"betweenthepipes\")"), chunk_opts = list(
+    label = "setup", include = FALSE)), setup = NULL, chunks = list(
+    list(label = "penalty", code = "hockey_data %>%\n  filter() %>%\n  count()", 
+        opts = list(label = "\"penalty\"", exercise = "TRUE", 
+            exercise.eval = "FALSE"), engine = "r")), code_check = NULL, 
+    error_check = NULL, check = NULL, solution = structure(c("hockey_data %>%", 
+    "  filter(event_type == \"PENL\") %>%", "  count(event_player_2, sort = TRUE)"
+    ), chunk_opts = list(label = "penalty-solution")), tests = NULL, 
+    options = list(eval = FALSE, echo = TRUE, results = "markup", 
+        tidy = FALSE, tidy.opts = NULL, collapse = FALSE, prompt = FALSE, 
+        comment = NA, highlight = FALSE, size = "normalsize", 
+        background = "#F7F7F7", strip.white = TRUE, cache = 0, 
+        cache.path = "Tuto_learnR_Data_Explor_cache/html/", cache.vars = NULL, 
+        cache.lazy = TRUE, dependson = NULL, autodep = FALSE, 
+        cache.rebuild = FALSE, fig.keep = "high", fig.show = "asis", 
+        fig.align = "default", fig.path = "Tuto_learnR_Data_Explor_files/figure-html/", 
+        dev = "png", dev.args = NULL, dpi = 192, fig.ext = "png", 
+        fig.width = 6.5, fig.height = 4, fig.env = "figure", 
+        fig.cap = NULL, fig.scap = NULL, fig.lp = "fig:", fig.subcap = NULL, 
+        fig.pos = "", out.width = 624, out.height = NULL, out.extra = NULL, 
+        fig.retina = 2, external = TRUE, sanitize = FALSE, interval = 1, 
+        aniopts = "controls,loop", warning = TRUE, error = FALSE, 
+        message = TRUE, render = NULL, ref.label = NULL, child = NULL, 
+        engine = "r", split = FALSE, include = TRUE, purl = TRUE, 
+        max.print = 1000, exercise.cap = "betweenthepipes", label = "penalty", 
+        exercise = TRUE, exercise.eval = FALSE, code = c("hockey_data %>%", 
+        "  filter() %>%", "  count()"), out.width.px = 624, out.height.px = 384, 
+        params.src = "penalty, exercise = TRUE, exercise.eval = FALSE", 
+        fig.num = 0, exercise.df_print = "paged", exercise.checker = "NULL"), 
+    engine = "r", version = "4"), class = c("r", "tutorial_exercise"
+)))
+</script>
+</p>
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="dependencies">
+{"type":"list","attributes":{},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["header-attrs"]},{"type":"character","attributes":{},"value":["2.17"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pandoc"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["header-attrs.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootstrap"]},{"type":"character","attributes":{},"value":["3.3.5"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/bootstrap"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["viewport"]}},"value":[{"type":"character","attributes":{},"value":["width=device-width, initial-scale=1"]}]},{"type":"character","attributes":{},"value":["js/bootstrap.min.js","shim/html5shiv.min.js","shim/respond.min.js"]},{"type":"character","attributes":{},"value":["css/cerulean.min.css"]},{"type":"character","attributes":{},"value":["<style>h1 {font-size: 34px;}\n       h1.title {font-size: 38px;}\n       h2 {font-size: 30px;}\n       h3 {font-size: 24px;}\n       h4 {font-size: 18px;}\n       h5 {font-size: 16px;}\n       h6 {font-size: 12px;}\n       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}\n       pre:not([class]) { background-color: white }<\/style>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["pagedtable"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/pagedtable-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["js/pagedtable.js"]},{"type":"character","attributes":{},"value":["css/pagedtable.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["textmate.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["i18n"]},{"type":"character","attributes":{},"value":["21.6.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/i18n"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["i18next.min.js","tutorial-i18n-init.js"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["<script id=\"i18n-cstm-trns\" type=\"application/json\">{\"language\":\"en\",\"resources\":{\"en\":{\"translation\":{\"button\":{\"runcode\":\"Run Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Hint\",\"hint_plural\":\"Hints\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Next Hint\",\"hintprev\":\"Previous Hint\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copy to Clipboard\",\"startover\":\"Start Over\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continue\",\"submitanswer\":\"Submit Answer\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Previous Topic\",\"nexttopic\":\"Next Topic\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Try Again\"},\"text\":{\"startover\":\"Start Over\",\"areyousure\":\"Are you sure you want to start over? (all exercise progress will be reset)\",\"youmustcomplete\":\"You must complete the\",\"exercise\":\"exercise\",\"exercise_plural\":\"exercises\",\"inthissection\":\"in this section before continuing.\",\"code\":\"Code\",\"enginecap\":\"{{engine}} $t(text.code)\",\"quiz\":\"Quiz\",\"blank\":\"blank\",\"blank_plural\":\"blanks\",\"exercisecontainsblank\":\"This exercise contains {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Please replace {{blank}} with valid code.\",\"unparsable\":\"It looks like this might not be valid R code. R cannot determine how to turn your text into a complete command. You may have forgotten to fill in a blank, to remove an underscore, to include a comma between arguments, or to close an opening <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> or <code>{<\\/code> with a matching <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> or <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>It looks like your R code contains specially formatted quotation marks or &quot;curly&quot; quotes (<code>{{character}}<\\/code>) around character strings, making your code invalid. R requires character values to be contained in straight quotation marks (<code>&quot;<\\/code> or <code>'<\\/code>).<\\/p> {{code}} <p>Don't worry, this is a common source of errors when you copy code from another app that applies its own formatting to text. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. Try deleting the special character from your code and retyping it manually.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>It looks like your R code contains an unexpected special character (<code>{{character}}<\\/code>) that makes your code invalid.<\\/p> {{code}} <p>Sometimes your code may contain a special character that looks like a regular character, especially if you copy and paste the code from another app. You can try replacing the code on that line with the following. There may be other places that need to be fixed, too.<\\/p> {{suggestion}}\\n\",\"and\":\"and\",\"or\":\"or\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"fr\":{\"translation\":{\"button\":{\"runcode\":\"Lancer le Code\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Indication\",\"hint_plural\":\"Indications\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Indication Suivante\",\"hintprev\":\"Indication Précédente\",\"solution\":\"Solution\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copier dans le Presse-papier\",\"startover\":\"Recommencer\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuer\",\"submitanswer\":\"Soumettre\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Chapitre Précédent\",\"nexttopic\":\"Chapitre Suivant\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Réessayer\"},\"text\":{\"startover\":\"Recommencer\",\"areyousure\":\"Êtes-vous certains de vouloir recommencer? (La progression sera remise à zéro)\",\"youmustcomplete\":\"Vous devez d'abord compléter\",\"exercise\":\"l'exercice\",\"exercise_plural\":\"des exercices\",\"inthissection\":\"de cette section avec de continuer.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"et\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"es\":{\"translation\":{\"button\":{\"runcode\":\"Ejecutar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Pista\",\"hint_plural\":\"Pistas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Siguiente pista\",\"hintprev\":\"Pista anterior\",\"solution\":\"Solución\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar al portapapeles\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar respuesta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tema anterior\",\"nexttopic\":\"Tema siguiente\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Volver a intentar\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"¿De verdad quieres empezar de nuevo? (todo el progreso del ejercicio se perderá)\",\"youmustcomplete\":\"Debes completar\",\"exercise\":\"el ejercicio\",\"exercise_plural\":\"los ejercicios\",\"inthissection\":\"en esta sección antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Cuestionario\",\"and\":\"y\",\"or\":\"o\",\"oxfordcomma\":\"\"}}},\"pt\":{\"translation\":{\"button\":{\"runcode\":\"Executar código\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Dica\",\"hint_plural\":\"Dicas\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Próxima dica\",\"hintprev\":\"Dica anterior\",\"solution\":\"Solução\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Copiar para a área de transferência\",\"startover\":\"Reiniciar\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Continuar\",\"submitanswer\":\"Enviar resposta\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Tópico anterior\",\"nexttopic\":\"Próximo tópico\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tentar novamente\"},\"text\":{\"startover\":\"Reiniciar\",\"areyousure\":\"Tem certeza que deseja começar novamente? (todo o progresso feito será perdido)\",\"youmustcomplete\":\"Você deve completar\",\"exercise\":\"o exercício\",\"exercise_plural\":\"os exercícios\",\"inthissection\":\"nesta seção antes de continuar.\",\"code\":\"Código\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"and\":\"e\",\"or\":\"ou\",\"oxfordcomma\":\"\"}}},\"tr\":{\"translation\":{\"button\":{\"runcode\":\"Çalistirma Kodu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Ipucu\",\"hint_plural\":\"Ipuçlari\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Sonraki Ipucu\",\"hintprev\":\"Önceki Ipucu\",\"solution\":\"Çözüm\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Pano'ya Kopyala\",\"startover\":\"Bastan Baslamak\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Devam et\",\"submitanswer\":\"Cevabi onayla\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Önceki Konu\",\"nexttopic\":\"Sonraki Konu\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Tekrar Deneyin\"},\"text\":{\"startover\":\"Bastan Baslamak\",\"areyousure\":\"Bastan baslamak istediginizden emin misiniz? (tüm egzersiz ilerlemesi kaybolacak)\",\"youmustcomplete\":\"Tamamlamalisin\",\"exercise\":\"egzersiz\",\"exercise_plural\":\"egzersizler\",\"inthissection\":\"devam etmeden önce bu bölümde\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Sinav\",\"oxfordcomma\":\"\"}}},\"emo\":{\"translation\":{\"button\":{\"runcode\":\"<U+0001F3C3>\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"<U+0001F4A1>\",\"hint_plural\":\"$t(button.hint)\",\"hinttitle\":\"$t(button.hint)\",\"solution\":\"<U+0001F3AF>\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"<U+0001F4CB>\",\"startover\":\"<U+23EE>\",\"startovertitle\":\"Start Over\",\"continue\":\"<U+2705>\",\"submitanswer\":\"<U+0001F197>\",\"submitanswertitle\":\"Submit Answer\",\"previoustopic\":\"<U+2B05>\",\"nexttopic\":\"<U+27A1>\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"<U+0001F501>\"},\"text\":{\"startover\":\"<U+23EE>\",\"areyousure\":\"<U+0001F914>\",\"youmustcomplete\":\"<U+26A0><U+FE0F> <U+0001F449> <U+0001F9D1><U+200D><U+0001F4BB>\",\"exercise\":\"\",\"exercise_plural\":\"\",\"inthissection\":\"\",\"code\":\"<U+0001F4BB>\",\"enginecap\":\"$t(text.code) {{engine}}\",\"oxfordcomma\":\"\"}}},\"eu\":{\"translation\":{\"button\":{\"runcode\":\"Kodea egikaritu\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Laguntza\",\"hint_plural\":\"Laguntza\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Aurreko laguntza\",\"hintprev\":\"Hurrengo laguntza\",\"solution\":\"Ebazpena\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Arbelean kopiatu\",\"startover\":\"Berrabiarazi\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Jarraitu\",\"submitanswer\":\"Erantzuna bidali\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Aurreko atala\",\"nexttopic\":\"Hurrengo atala\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Berriro saiatu\"},\"text\":{\"startover\":\"Berrabiarazi\",\"areyousure\":\"Berriro hasi nahi duzu? (egindako lana galdu egingo da)\",\"youmustcomplete\":\"Aurrera egin baino lehen atal honetako\",\"exercise\":\"ariketa egin behar duzu.\",\"exercise_plural\":\"ariketak egin behar dituzu.\",\"inthissection\":\"\",\"code\":\"Kodea\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Galdetegia\",\"oxfordcomma\":\"\"}}},\"de\":{\"translation\":{\"button\":{\"runcode\":\"Code ausführen\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Tipp\",\"hint_plural\":\"Tipps\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Nächster Tipp\",\"hintprev\":\"Vorheriger Tipp\",\"solution\":\"Lösung\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"In die Zwischenablage kopieren\",\"startover\":\"Neustart\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Weiter\",\"submitanswer\":\"Antwort einreichen\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Vorheriges Kapitel\",\"nexttopic\":\"Nächstes Kapitel\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Nochmal versuchen\"},\"text\":{\"startover\":\"Neustart\",\"areyousure\":\"Bist du sicher, dass du neustarten willst? (der gesamte Lernfortschritt wird gelöscht)\",\"youmustcomplete\":\"Vervollstädinge\",\"exercise\":\"die Übung\",\"exercise_plural\":\"die Übungen\",\"inthissection\":\"in diesem Kapitel, bevor du fortfährst.\",\"code\":\"Code\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"Lücke\",\"blank_plural\":\"Lücken\",\"pleasereplaceblank\":\"Bitte ersetze {{blank}} mit gültigem Code.\",\"unparsable\":\"Dies scheint kein gültiger R Code zu sein. R kann deinen Text nicht in einen gültigen Befehl übersetzen. Du hast vielleicht vergessen, die Lücke zu füllen, einen Unterstrich zu entfernen, ein Komma zwischen Argumente zu setzen oder ein eröffnendes <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> oder <code>{<\\/code> mit einem zugehörigen <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> oder <code>}<\\/code> zu schließen.\\n\",\"and\":\"und\",\"or\":\"oder\",\"listcomma\":\", \",\"oxfordcomma\":\",\"}}},\"ko\":{\"translation\":{\"button\":{\"runcode\":\"<U+CF54><U+B4DC> <U+C2E4><U+D589>\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"<U+D78C><U+D2B8>\",\"hint_plural\":\"<U+D78C><U+D2B8><U+B4E4>\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"<U+B2E4><U+C74C> <U+D78C><U+D2B8>\",\"hintprev\":\"<U+C774><U+C804> <U+D78C><U+D2B8>\",\"solution\":\"<U+C194><U+B8E8><U+C158>\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"<U+D074><U+B9BD><U+BCF4><U+B4DC><U+C5D0> <U+BCF5><U+C0AC>\",\"startover\":\"<U+C7AC><U+D559><U+C2B5>\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"<U+B2E4><U+C74C> <U+D559><U+C2B5><U+C73C><U+B85C>\",\"submitanswer\":\"<U+C815><U+B2F5> <U+C81C><U+CD9C>\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"<U+C774><U+C804> <U+D1A0><U+D53D>\",\"nexttopic\":\"<U+B2E4><U+C74C> <U+D1A0><U+D53D>\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"<U+C7AC><U+C2DC><U+B3C4>\"},\"text\":{\"startover\":\"<U+C7AC><U+D559><U+C2B5>\",\"areyousure\":\"<U+B2E4><U+C2DC> <U+C2DC><U+C791> <U+D558><U+C2DC><U+ACA0><U+C2B5><U+B2C8><U+AE4C>? (<U+BAA8><U+B4E0> <U+C608><U+C81C><U+C758> <U+C9C4><U+D589> <U+C815><U+BCF4><U+AC00> <U+C7AC><U+C124><U+C815><U+B429><U+B2C8><U+B2E4>)\",\"youmustcomplete\":\"<U+B2F9><U+C2E0><U+C740> <U+C644><U+B8CC><U+D574><U+C57C> <U+D569><U+B2C8><U+B2E4>\",\"exercise\":\"<U+C5F0><U+C2B5><U+BB38><U+C81C>\",\"exercise_plural\":\"<U+C5F0><U+C2B5><U+BB38><U+C81C><U+B4E4>\",\"inthissection\":\"<U+C774> <U+C139><U+C158><U+C744> <U+C2E4><U+D589><U+D558><U+AE30> <U+C804><U+C5D0>\",\"code\":\"<U+CF54><U+B4DC>\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"<U+D034><U+C988>\",\"blank\":\"<U+ACF5><U+BC31>\",\"blank_plural\":\"<U+ACF5><U+BC31><U+B4E4>\",\"exercisecontainsblank\":\"<U+C774> <U+C5F0><U+C2B5><U+BB38><U+C81C><U+C5D0><U+B294> {{count}}<U+AC1C><U+C758> $t(text.blank)<U+C774> <U+D3EC><U+D568><U+B418><U+C5B4> <U+C788><U+C2B5><U+B2C8><U+B2E4>.\",\"pleasereplaceblank\":\"{{blank}}<U+B97C> <U+C720><U+D6A8><U+D55C> <U+CF54><U+B4DC><U+B85C> <U+BC14><U+AFB8><U+C2ED><U+C2DC><U+C624>.\",\"unparsable\":\"<U+C774><U+AC83><U+C740> <U+C720><U+D6A8><U+D55C> R <U+CF54><U+B4DC><U+AC00> <U+C544><U+B2D0> <U+C218> <U+C788><U+C2B5><U+B2C8><U+B2E4>. R<U+C740> <U+D14D><U+C2A4><U+D2B8><U+B97C> <U+C644><U+C804><U+D55C> <U+BA85><U+B839><U+C73C><U+B85C> <U+BCC0><U+D658><U+D558><U+B294> <U+BC29><U+BC95><U+C744> <U+ACB0><U+C815><U+D560> <U+C218> <U+C5C6><U+C2B5><U+B2C8><U+B2E4>. <U+B2F9><U+C2E0><U+C740> <U+ACF5><U+BC31><U+C774><U+B098> <U+BC11><U+C904><U+C744> <U+B300><U+CCB4><U+D558><U+C5EC> <U+CC44><U+C6B0><U+AE30>, <U+C778><U+C218><U+B97C> <U+CEF4><U+B9C8><U+B85C> <U+AD6C><U+BD84><U+D558><U+AE30>, <U+B610><U+B294> <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> , <code>{<\\/code><U+B85C> <U+C2DC><U+C791><U+D558><U+B294> <U+AD6C><U+BB38><U+C744> <U+B2EB><U+B294> <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>, <code>}<\\/code><U+C744> <U+C78A><U+C5C8><U+C744> <U+C218><U+B3C4> <U+C788><U+C2B5><U+B2C8><U+B2E4>.\\n\",\"and\":\"<U+ADF8><U+B9AC><U+ACE0>\",\"or\":\"<U+D639><U+C740>\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}},\"zh\":{\"translation\":{\"button\":{\"runcode\":\"<U+8FD0><U+884C><U+4EE3><U+7801>\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"<U+63D0><U+793A>\",\"hint_plural\":\"<U+63D0><U+793A>\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"<U+4E0B><U+4E00><U+4E2A><U+63D0><U+793A>\",\"hintprev\":\"<U+4E0A><U+4E00><U+4E2A><U+63D0><U+793A>\",\"solution\":\"<U+7B54><U+6848>\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"<U+590D><U+5236><U+5230><U+526A><U+5207><U+677F>\",\"startover\":\"<U+91CD><U+65B0><U+5F00><U+59CB>\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"<U+7EE7><U+7EED>\",\"submitanswer\":\"<U+63D0><U+4EA4><U+7B54><U+6848>\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"<U+4E0A><U+4E00><U+4E13><U+9898>\",\"nexttopic\":\"<U+4E0B><U+4E00><U+4E13><U+9898>\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"<U+518D><U+8BD5><U+4E00><U+6B21>\"},\"text\":{\"startover\":\"<U+91CD><U+7F6E>\",\"areyousure\":\"<U+4F60><U+786E><U+5B9A><U+8981><U+91CD><U+65B0><U+5F00><U+59CB><U+5417>? (<U+6240><U+6709><U+5F53><U+524D><U+8FDB><U+5EA6><U+5C06><U+88AB><U+91CD><U+7F6E>)\",\"youmustcomplete\":\"<U+4F60><U+5FC5><U+987B><U+5B8C><U+6210>\",\"exercise\":\"<U+7EC3><U+4E60>\",\"exercise_plural\":\"<U+7EC3><U+4E60>\",\"inthissection\":\"<U+5728><U+8FDB><U+884C><U+672C><U+8282><U+4E4B><U+524D>\",\"code\":\"<U+4EE3><U+7801>\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"<U+6D4B><U+8BD5>\",\"blank\":\"<U+7A7A>\",\"blank_plural\":\"<U+7A7A>\",\"exercisecontainsblank\":\"<U+672C><U+7EC3><U+4E60><U+5305><U+542B>{{count}}<U+4E2A>$t(text.blank)\",\"pleasereplaceblank\":\"<U+8BF7><U+5728>{{blank}}<U+5185><U+586B><U+5199><U+6070><U+5F53><U+7684><U+4EE3><U+7801>\",\"unparsable\":\"<U+8FD9><U+4F3C><U+4E4E><U+4E0D><U+662F><U+6709><U+6548><U+7684>R<U+4EE3><U+7801><U+3002> R<U+4E0D><U+77E5><U+9053><U+5982><U+4F55><U+5C06><U+60A8><U+7684><U+6587><U+672C><U+8F6C><U+6362><U+4E3A><U+5B8C><U+6574><U+7684><U+547D><U+4EE4><U+3002> <U+60A8><U+662F><U+5426><U+5FD8><U+4E86><U+586B><U+7A7A>,<U+5FD8><U+4E86><U+5220><U+9664><U+4E0B><U+5212><U+7EBF>,<U+5FD8><U+4E86><U+5728><U+53C2><U+6570><U+4E4B><U+95F4><U+5305><U+542B><U+9017><U+53F7>,<U+6216><U+8005><U+662F><U+5FD8><U+4E86><U+7528><code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code>,<code>}<\\/code><U+6765><U+5C01><U+95ED><code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code><U+3002> or <code>{<\\/code><U+3002>\\n\",\"unparsablequotes\":\"<p><U+60A8><U+7684>R<U+4EE3><U+7801><U+4E2D><U+4F3C><U+4E4E><U+542B><U+6709><U+7279><U+6B8A><U+683C><U+5F0F><U+7684><U+5F15><U+53F7>,<U+6216><U+8005><U+5F2F><U+5F15><U+53F7>(<code>{{character}}<\\/code>) <U+5728><U+5B57><U+7B26><U+4E32><U+524D><U+540E>,<U+5728>R<U+4E2D><U+5B57><U+7B26><U+4E32><U+5E94><U+8BE5><U+88AB><U+76F4><U+5F15><U+53F7>(<code>&quot;<\\/code> <U+6216><U+8005> <code>'<\\/code>)<U+5305><U+88F9><U+3002><\\/p> {{code}} <p><U+522B><U+62C5><U+5FC3>,<U+8BE5><U+9519><U+8BEF><U+7ECF><U+5E38><U+5728><U+590D><U+5236><U+7C98><U+8D34><U+5305><U+542B><U+683C><U+5F0F><U+7684><U+4EE3><U+7801><U+65F6><U+9047><U+5230>, <U+60A8><U+53EF><U+4EE5><U+5C1D><U+8BD5><U+5C06><U+8BE5><U+884C><U+4E2D><U+7684><U+4EE3><U+7801><U+66FF><U+6362><U+4E3A><U+4EE5><U+4E0B><U+4EE3><U+7801>,<U+4E5F><U+8BB8><U+8FD8><U+6709><U+5176><U+4ED6><U+5730><U+65B9><U+9700><U+8981><U+4FEE><U+6539><U+3002><\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p><U+60A8><U+7684><U+4EE3><U+7801><U+4E2D><U+4F3C><U+4E4E><U+5305><U+542B><U+6709><U+5F02><U+5E38><U+5B57><U+7B26>(<code>{{character}}<\\/code>),<U+5BFC><U+81F4><U+4EE3><U+7801><U+65E0><U+6548><U+3002><\\/p> {{code}} <p><U+6709><U+65F6><U+5019><U+4F60><U+7684><U+4EE3><U+7801><U+53EF><U+80FD><U+542B><U+6709><U+770B><U+4F3C><U+6B63><U+5E38><U+5B57><U+7B26><U+7684><U+7279><U+6B8A><U+5B57><U+7B26>,<U+7279><U+522B><U+662F><U+5F53><U+4F60><U+590D><U+5236><U+7C98><U+8D34><U+5176><U+4ED6><U+6765><U+6E90><U+4EE3><U+7801><U+7684><U+65F6><U+5019><U+3002> <U+8BF7><U+8BD5><U+7740><U+5220><U+9664><U+8FD9><U+4E9B><U+7279><U+6B8A><U+5B57><U+7B26>,<U+91CD><U+65B0><U+8F93><U+5165><\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p><U+60A8><U+7684><U+4EE3><U+7801><U+4E2D><U+4F3C><U+4E4E><U+5305><U+542B><U+6709><U+5F02><U+5E38><U+5B57><U+7B26>(<code>{{character}}<\\/code>),<U+5BFC><U+81F4><U+4EE3><U+7801><U+65E0><U+6548><U+3002><\\/p> {{code}} <p><U+6709><U+65F6><U+5019><U+4F60><U+7684><U+4EE3><U+7801><U+53EF><U+80FD><U+542B><U+6709><U+770B><U+4F3C><U+6B63><U+5E38><U+5B57><U+7B26><U+7684><U+7279><U+6B8A><U+5B57><U+7B26>,<U+7279><U+522B><U+662F><U+5F53><U+4F60><U+590D><U+5236><U+7C98><U+8D34><U+5176><U+4ED6><U+6765><U+6E90><U+4EE3><U+7801><U+7684><U+65F6><U+5019><U+3002> <U+8BF7><U+8BD5><U+7740><U+5220><U+9664><U+8FD9><U+4E9B><U+7279><U+6B8A><U+5B57><U+7B26>,<U+91CD><U+65B0><U+8F93><U+5165><\\/p>\\n\",\"and\":\"<U+4E14>\",\"or\":\"<U+6216>\",\"listcomma\":\",\",\"oxfordcomma\":\",\"}}},\"pl\":{\"translation\":{\"button\":{\"runcode\":\"Uruchom kod\",\"runcodetitle\":\"$t(button.runcode) ({{kbd}})\",\"hint\":\"Podpowiedz\",\"hint_plural\":\"Podpowiedzi\",\"hinttitle\":\"$t(button.hint)\",\"hintnext\":\"Nastepna podpowiedz\",\"hintprev\":\"Poprzednia podpowiedz\",\"solution\":\"Rozwiazanie\",\"solutiontitle\":\"$t(button.solution)\",\"copyclipboard\":\"Kopiuj do schowka\",\"startover\":\"Zacznij od poczatku\",\"startovertitle\":\"$t(button.startover)\",\"continue\":\"Kontynuuj\",\"submitanswer\":\"Wyslij\",\"submitanswertitle\":\"$t(button.submitanswer)\",\"previoustopic\":\"Poprzednia sekcja\",\"nexttopic\":\"Nastepna sekcja\",\"questionsubmit\":\"$t(button.submitanswer)\",\"questiontryagain\":\"Spróbuj ponownie\"},\"text\":{\"startover\":\"Zacznij od poczatku\",\"areyousure\":\"Czy na pewno chcesz zaczac od poczatku? (caly postep w zadaniu zostanie utracony)\",\"youmustcomplete\":\"Musisz ukonczyc\",\"exercise\":\"cwiczenie\",\"exercise_plural\":\"cwiczenia\",\"inthissection\":\"w tej sekcji przed kontynuowaniem\",\"code\":\"Kod\",\"enginecap\":\"$t(text.code) {{engine}}\",\"quiz\":\"Quiz\",\"blank\":\"luka\",\"blank_plural\":\"luk(i)\",\"exercisecontainsblank\":\"To cwiczenie zawiera {{count}} $t(text.blank).\",\"pleasereplaceblank\":\"Prosze uzupelnic {{blank}} prawidlowym kodem.\",\"unparsable\":\"Wyglada na to, ze moze to nie byc prawidlowy kod R. R nie jest w stanie przetworzyc Twojego tekstu na polecenie. Mogles(-as) zapomniec wypelnic luki, usunac podkreslnik, umiescic przecinka miedzy argumentami, lub zamknac znak <code>&quot;<\\/code>, <code>'<\\/code>, <code>(<\\/code> lub <code>{<\\/code> odpowiadajacym <code>&quot;<\\/code>, <code>'<\\/code>, <code>)<\\/code> lub <code>}<\\/code>.\\n\",\"unparsablequotes\":\"<p>Wyglada na to, ze Twój kod zawiera szczególnie sformatowane cudzyslowy lub cudzyslowy typograficzne (<code>{{character}}<\\/code>) przy ciagach znaków, co sprawia, ze kod jest niepoprawny. R wymaga cudzyslowów prostych (<code>&quot;<\\/code> albo <code>'<\\/code>).<\\/p> {{code}} <p>Nie martw sie, to powszechne zródlo bledów, gdy kopiuje sie kod z innego programu, który sam formatuje teskt. Mozesz spróbowac zastapic swój kod nastepujacym kodem. Moga byc tez inne miejsca, które wymagaja poprawienia.<\\/p> {{suggestion}}\\n\",\"unparsableunicode\":\"<p>Wyglada na to, ze Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, ze kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod moze zawierac znak specjalny, który wyglada jak zwykly znak, zwlaszcza jesli kopiujesz kod z innego programu. Spróbuj usunac znak specjalny i wpisac do ponownie recznie.<\\/p>\\n\",\"unparsableunicodesuggestion\":\"<p>Wyglada na to, ze Twój kod zawiera niespodziewany znak specjalny (<code>{{character}}<\\/code>), co sprawia, ze kod jest niepoprawny.<\\/p> {{code}} <p>Czasami Twój kod moze zawierac znak specjalny, który wyglada jak zwykly znak, zwlaszcza jesli kopiujesz kod z innego programu. Mozesz spróbowac zastapic swój kod nastepujacym kodem. Moga byc tez inne miejsca, które wymagaja poprawienia.<\\/p> {{suggestion}}\\n\",\"and\":\"i\",\"or\":\"lub\",\"listcomma\":\", \",\"oxfordcomma\":\"\"}}}}}<\/script>"]},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial-format"]},{"type":"character","attributes":{},"value":["0.11.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmarkdown/templates/tutorial/resources"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial-format.js"]},{"type":"character","attributes":{},"value":["tutorial-format.css","rstudio-theme.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["navigation"]},{"type":"character","attributes":{},"value":["1.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/navigation-1.1"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tabsets.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["highlightjs"]},{"type":"character","attributes":{},"value":["9.12.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/highlightjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["highlight.js"]},{"type":"character","attributes":{},"value":["default.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["jquery"]},{"type":"character","attributes":{},"value":["3.6.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/3.6.0"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquery-3.6.0.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["jquerylib"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.1.4"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["font-awesome"]},{"type":"character","attributes":{},"value":["5.1.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["rmd/h/fontawesome"]}]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["css/all.css","css/v4-shims.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["rmarkdown"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["2.17"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["bootbox"]},{"type":"character","attributes":{},"value":["5.5.2"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/bootbox"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["bootbox.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["idb-keyvalue"]},{"type":"character","attributes":{},"value":["3.2.0"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/idb-keyval"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["idb-keyval-iife-compat.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[false]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["tutorial"]},{"type":"character","attributes":{},"value":["0.11.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/tutorial"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["tutorial.js"]},{"type":"character","attributes":{},"value":["tutorial.css"]},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["ace"]},{"type":"character","attributes":{},"value":["1.10.1"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/ace"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["ace.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["name","version","src","meta","script","stylesheet","head","attachment","package","all_files","pkgVersion"]},"class":{"type":"character","attributes":{},"value":["html_dependency"]}},"value":[{"type":"character","attributes":{},"value":["clipboardjs"]},{"type":"character","attributes":{},"value":["2.0.10"]},{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["file"]}},"value":[{"type":"character","attributes":{},"value":["lib/clipboardjs"]}]},{"type":"NULL"},{"type":"character","attributes":{},"value":["clipboard.min.js"]},{"type":"NULL"},{"type":"NULL"},{"type":"NULL"},{"type":"character","attributes":{},"value":["learnr"]},{"type":"logical","attributes":{},"value":[true]},{"type":"character","attributes":{},"value":["0.11.1"]}]}]}
+</script>
+<!--/html_preserve-->
+<!--html_preserve-->
+<script type="application/shiny-prerendered" data-context="execution_dependencies">
+{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages"]}},"value":[{"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["packages","version"]},"class":{"type":"character","attributes":{},"value":["data.frame"]},"row.names":{"type":"integer","attributes":{},"value":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66]}},"value":[{"type":"character","attributes":{},"value":["assertthat","backports","base","bit","bit64","bslib","cachem","checkmate","cli","compiler","crayon","curl","datasets","DBI","digest","dplyr","ellipsis","evaluate","fansi","fastmap","generics","glue","graphics","grDevices","hms","htmltools","htmlwidgets","httpuv","jquerylib","jsonlite","knitr","later","learnr","lifecycle","magrittr","markdown","methods","mime","parallel","pillar","pkgconfig","promises","R6","Rcpp","readr","rlang","rmarkdown","rprojroot","rstudioapi","sass","shiny","stats","stringi","stringr","tibble","tidyselect","tools","tzdb","utf8","utils","vctrs","vroom","withr","xfun","xtable","yaml"]},{"type":"character","attributes":{},"value":["0.2.1","1.4.1","4.1.3","4.0.4","4.0.5","0.4.0","1.0.6","2.1.0","3.4.1","4.1.3","1.5.2","4.3.3","4.1.3","1.1.3","0.6.30","1.0.10","0.3.2","0.17","1.0.3","1.1.0","0.1.3","1.6.2","4.1.3","4.1.3","1.1.2","0.5.3","1.5.4","1.6.6","0.1.4","1.8.2","1.40","1.3.0","0.11.1","1.0.3","2.0.3","1.2","4.1.3","0.12","4.1.3","1.8.1","2.0.3","1.2.0.1","2.5.1","1.0.9","2.1.3","1.0.6","2.17","2.0.3","0.14","0.4.2","1.7.2","4.1.3","1.7.8","1.4.1","3.1.8","1.2.0","4.1.3","0.3.0","1.2.2","4.1.3","0.4.2","1.6.0","2.5.0","0.34","1.8-4","2.3.6"]}]}]}
+</script>
+<!--/html_preserve-->
+</div>
+</div>
+
+</article> <!-- topics -->
+
+<div class="topicsContainer">
+<div class="topicsPositioner">
+<div class="band">
+<div class="bandContent topicsListContainer">
+
+<!-- begin doc-metadata -->
+<div id="doc-metadata">
+<h1 class="title toc-ignore" style="display:none;">Introduction to Data
+Exploration with R</h1>
+<h2 class="subtitle"><em><br></em></h2>
+<h4 class="author"><em>David Munoz Tord</em></h4>
+</div>
+<!-- end doc-metadata -->
+
+</div> <!-- bandContent.topicsListContainer -->
+</div> <!-- band -->
+</div> <!-- topicsPositioner -->
+</div> <!-- topicsContainer -->
+
+
+</main> <!-- bandContent page -->
+</div> <!-- pageContent band -->
+
+
+
+<!-- Build Tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("section-TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<script>
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+</script>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+
+</body>
+
+</html>

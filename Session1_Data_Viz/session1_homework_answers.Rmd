@@ -52,7 +52,7 @@ So you have
 #hint: use read_csv or double click on the file and import
 #hint2: watch out what name is assigned to the data !
 
-data_RT  <- read_csv("C:/Users/dmunoz/Downloads/data_RT.csv") #read the data
+data_RT  <- read_csv(here("data", "data_RT.csv")) #read the data
 #you can also just read it manually
 #daat_RT <- read_csv("C:/Users/david/Documents/cours_stat/data_RT.csv")
 data_RT
@@ -84,10 +84,15 @@ barplot
 #hint: x = RT
 
 
-hist <- ggplot(data_RT, aes(RT)) + 
-  geom_histogram()
+ggplot(data_RT, aes(RT)) + 
+  geom_histogram()  + 
+  geom_vline(xintercept = mean(data_RT$RT), col = "green") +  #create an vertical line at the mean
+  geom_vline(xintercept = median(data_RT$RT), col = "red") #create an vertical line at + 1 sd
 
-hist
+
+
+
+
 
 ```
 
