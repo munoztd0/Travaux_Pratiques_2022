@@ -1,0 +1,303 @@
+---
+title: "session 3 visualization tests"
+output:
+  html_document:
+    df_print: paged
+---
+
+Let's load the different examples files. Replace the file path `C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/` with yours.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+
+df_bisphenol <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/ExerciceBisphenol.csv")
+
+Bisphenol_long <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/Bisphenol_long.csv")
+
+plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/ExercicePlasmaCholesterol.xlsx")
+
+```
+
+We want to make tests. 
+
+We will use
+
+```{r,eval=F}
+t.test()
+```
+
+for the t test, and
+ 
+```{r,eval=F}
+chisq.test()
+```
+ 
+for the chi2 test
+
+and 
+
+```{r,eval=F}
+fisher.test()
+```
+
+for the Fisher exact test.
+
+Use the help to find how the functions work !!
+
+```{r,eval=F}
+?chisq.test
+?fisher.test
+?t.test
+```
+
+# plasma data
+
+Measurement of plasma concentration for 3 groups: Control, treatment 1 and treatment 2. 
+
+**Question**: We want to see if there is a significant difference between each group. Do graphs, do tests.
+
+
+## wide vs long format
+
+
+```{r}
+plasma
+```
+
+Here the data are in wide format, i.e. one column per group. But all columns are the same measurement. You could use long format, i.e. one column for the measurement (plasma), one for the groups. The function from tidyr if `pivot_longer`
+
+
+```{r}
+plasma %>% 
+  pivot_longer(c("Control","Treatment 1","Treatment 2"))
+```
+You can set the name of variable and value column directly in the function:
+
+```{r}
+plasma_long <- plasma %>% 
+  pivot_longer(c("Control","Treatment 1","Treatment 2"),
+               names_to = "group",
+               values_to = "plasma")
+plasma_long
+```
+
+## make some graph
+
+Use the long or wide format to do some graphs
+
+```{r}
+ggplot(plasma_long,
+       aes(group,plasma,color = group))+
+  geom_jitter()+
+  geom_boxplot(alpha = .4)
+```
+
+The same with wide format:
+
+```{r}
+ggplot(plasma)+
+  geom_jitter(aes("Control",Control,color = "Control"))+
+  geom_boxplot(aes("Control",Control,color = "Control"),alpha = .2)+
+  geom_jitter(aes("treatment 1",`Treatment 1`,color = "treatment 1"))+
+  geom_boxplot(aes("treatment 1",`Treatment 1`,color = "treatment 1"),alpha = .2)+
+  geom_jitter(aes("treatment 2",`Treatment 2`,color ="treatment 2"))+
+geom_boxplot(aes("treatment 2",`Treatment 2`,color ="treatment 2"),alpha = .2)
+```
+
+## make a test
+
+which test ?
+What does the test suppose ?
+
+make an histogram
+
+```{r}
+ggplot(plasma_long,aes(plasma))+
+  geom_histogram()
+```
+
+```{r}
+ggplot(plasma_long,aes(plasma))+
+  geom_histogram()+
+  facet_wrap(~group)
+```
+
+Compare the different groups, one to one!
+
+### use the wide format
+
+We can use t.test with x and y the two column we want to compare.
+```{r`,eval=F}
+?t.test
+```
+
+
+How to select one column ?
+
+```{r}
+plasma[,"Control"]
+plasma$Control
+```
+
+
+```{r}
+t.test(plasma$`Treatment 1`,
+       plasma$Control)
+```
+
+```{r}
+t.test(plasma[,"Control"],
+       plasma[,"Treatment 1"])
+
+```
+
+
+```{r}
+t.test(plasma$`Treatment 2`,
+       plasma$Control)
+```
+
+```{r}
+t.test(plasma$`Treatment 2`,plasma$`Treatment 1`)
+```
+
+
+### use the long format
+
+You can use a formula:
+
+a formula of the form lhs ~ rhs where lhs is a numeric variable giving the data values and rhs either 1 for a one-sample or paired test or a factor with two levels giving the corresponding groups.
+
+```{r}
+t.test(plasma ~ group,data = plasma_long)
+```
+
+we have 3 groups! Select only two.
+Base R style:
+
+```{r}
+plasma_long[plasma_long$group %in% c("Control","Treatment 2"),]
+```
+dplyr style :
+
+```{r}
+plasma_long %>% 
+  filter(group %in% c("Control","Treatment 2"))
+```
+
+```{r}
+plasma_long_sub <- plasma_long %>% 
+  filter(group %in% c("Control","Treatment 2")) 
+
+t.test(plasma ~ group,data = plasma_long_sub)
+```
+
+What does that mean ?????
+
+# Bisphenol data
+
+Here the result of a trial on the effect of bisphenol on cancer. There are 3 groups
+
+- control group: no bisphenol exposition
+- Moderate exposition to bisphenol
+- High exposition to bisphenol
+
+We want to compare the number of cancer between groups.
+What is the proper test ???
+
+## aggregated results
+
+```{r}
+df_bisphenol
+```
+
+The two columns give you the number of cancer developed in each group (each group is 30 patients)
+
+**Question**: is the proportion of cancer different in each group ?
+
+`chisq.test` takes a contigency matrix!
+
+I can just write the matrix:
+
+```{r}
+matrix(c(1,29,10,20),ncol = 2)
+```
+
+```{r}
+chisq.test(matrix(c(1,29,10,20),ncol = 2))
+```
+
+Or I can select the data, base R like
+
+```{r}
+as.matrix(df_bisphenol[df_bisphenol$group %in% c("Control","High exposition"),
+                                  c("Cancer","NoCancer")])
+
+```
+
+dplyr like
+
+```{r}
+library(dplyr)
+
+df_bisphenol %>%
+  filter(group %in% c("Control","High exposition")) %>%
+  select(Cancer,NoCancer)
+```
+
+
+```{r}
+cont_matrix <- df_bisphenol %>%
+  filter(group %in% c("Control","High exposition")) %>%
+  select(Cancer,NoCancer) %>%
+  as.matrix()
+```
+
+Now the test
+
+```{r}
+chisq.test(cont_matrix)
+```
+
+## detailed result
+
+The results could be long data for each patient:
+
+```{r}
+Bisphenol_long
+```
+```{r}
+?chisq.test
+```
+
+
+The `chisq.test` function can take two variables, one for the group, one for cancer yes no.
+
+```{r}
+chisq.test(Bisphenol_long$had_cancer[Bisphenol_long$group %in% c("Control","High_expo")],
+           Bisphenol_long$group[Bisphenol_long$group %in% c("Control","High_expo")])
+```
+
+You can actually find back the matrix from these data:
+
+```{r}
+long %>% 
+  group_by(group)%>%
+  summarise(cancer = sum(had_cancer == 1),
+            Nocancer = sum(had_cancer == 0))
+```
+
+
+
+# help
+
+- lost ? try https://rfortherestofus.com/courses/getting-started/
+- read https://r4ds.had.co.nz/, especially 
+   - https://r4ds.had.co.nz/exploratory-data-analysis.html
+   - https://r4ds.had.co.nz/workflow-basics.html
+ 
+  
+
+
