@@ -1,0 +1,226 @@
+---
+title: "Session 2: Parameters Estimate"
+subtitle: "Your Name"
+date: "October 16, 2022"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+# Setup
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(message=F, warning=F, comment=NA) #these are just Rmarkdown visual options
+
+```
+
+### Load libraries
+
+```{r}
+
+library(ggplot2)
+
+```
+
+# Simulation
+
+The goal of this code is to create a small simulation study to:
+
+1.  illustrate central limit theorem
+
+2.  show that 95% of generated samples should contain the true parameters
+
+### Let's generate some data
+
+```{r}
+
+#random generation for the normal distribution with mean equal to mean and standard deviation equal to sd.
+population <- rnorm(10000, mean=0, sd=1)
+
+ggplot() + geom_histogram(aes(population)) #do a simple histogram
+```
+
+We now generate a population of 1000 individuals following a Gaussian distribution.
+
+### Resample
+
+We will now randomly sample 50 individuals from this population.
+
+```{r}
+sample_size <- 10 # you can play around with this number
+
+mysample <- sample(population, sample_size) #take a data + a sample size 
+
+ggplot() + geom_histogram(aes(mysample)) #do a simple histogram
+
+```
+
+Can you describe the differences ?
+
+Play around with the sample size and see what happens. (Just change "50" to something else)
+
+### Calculate sample's statistics
+
+```{r}
+summary(mysample)
+```
+
+We now create 100 sample of size `sample_size`, with their statistics:
+
+```{r}
+
+size = 100
+
+#this creates a dataframe with fix parameters (do not need to understand this code)
+#rep() juste repeat a number over the number of time you want
+
+# this is are all random number has placeholder for later
+mySampleRes <- data.frame(mean=rep(0,size),
+                          sd=rep(1,size),
+                          sample = rep(NA,size),
+                          se=rep(1/sqrt(10),size), 
+                          confintLow=rep(0,size),
+                          confintHi=rep(0,size))
+
+head(mySampleRes) # all rows are the same for now
+```
+
+the real mean of my original population is 0
+
+
+```{r}
+
+#loop through each row
+
+for (i in 1:size){
+  mysample <- sample(population, sample_size)#sample from population, same as above
+  mySampleRes$sample[i] <- i #assign an incemental index 
+  mySampleRes$mean[i] <- mean(mysample) #calculate the mean of this random sample
+  mySampleRes$sd[i] <- sd(mysample) #calculate the standard deviation of this random sample
+  mySampleRes$min[i] <- min(mysample) #calculate the minimum of this random
+  mySampleRes$se[i] <- mySampleRes$sd[i]/sqrt(sample_size) #calculate the sampling error of this random sample
+  mySampleRes$confintLow[i] <- mySampleRes$mean[i]-1.96*mySampleRes$se[i] #calculate the lower 95% confidence interval of this random sample
+  mySampleRes$confintHi[i] <- mySampleRes$mean[i]+1.96*mySampleRes$se[i] #calculate the upper 95% confidence 
+}
+
+head(mySampleRes)
+
+
+# for reference:
+# Confidence level Confidence interval (mean ± sampling error)
+# 68% mean ± (1.0) x (SE)
+# 95% mean ± (1.96) x (SE)
+# 99% mean ± (2.58) x (SE) 
+# Bonus: Can you describe/explain/visualize why ?
+```
+
+```{r}
+
+mySampleRes$within_confint <- factor(mySampleRes$confintLow < 0 & mySampleRes$confintHi > 0, labels = c("Outside", "Inside")) # create variable to check if we have found and estimate (mean) which its confindence intervals doesn't include 0
+
+
+table(mySampleRes$within_confint)
+
+```
+
+
+
+
+Let's plot it !
+
+```{r}
+ggplot(mySampleRes,
+       aes(sample,mean,color = within_confint))+
+  geom_point()+
+  geom_errorbar(aes(ymin = confintLow,ymax = confintHi))+
+  geom_hline(yintercept = 0,color = "green")+
+  coord_flip()+
+  labs(title = "Mean of 100 samples")
+```
+
+Red estimates are different than zero with 95% confidence
+
+### Distribution of the means
+
+```{r}
+p_sample <- ggplot()+
+  geom_histogram(data = mySampleRes,
+                 aes(x=mean),binwidth = .2) +
+  xlim(round(min(population)),round(max(population))) +
+  geom_vline(xintercept = 0,color = "green") +
+  labs(title = "Sampled Means")
+
+p_sample
+```
+
+Distribution of the means depends on the sample size.
+
+```{r}
+library(patchwork)
+#install.packages('patchwork')
+p_population <- ggplot()+
+                geom_histogram(data = data.frame(x = population),
+                               aes(x=x),binwidth = .2)+
+                  xlim(round(min(population)),round(max(population)))+
+                  labs(title = "population")
+
+
+p_population / p_sample
+```
+
+
+# same with the min
+
+What we did with the mea cannot work with the min, or max, or sd.
+Let's see. The true min is:
+
+```{r}
+true_min <- min(population)
+```
+
+I create a confidence interval of teh sampled min:
+
+```{r}
+
+mySampleRes$confintLow_min <- mySampleRes$min-1.96*mySampleRes$se #calculate the lower 95% confidence interval of this random sample
+mySampleRes$confintHi_min <- mySampleRes$min+1.96*mySampleRes$se #calculate the upper 95% confidence interval of this random sample
+```
+
+I create a variable saying if the true value is within my confidence interval:
+```{r}
+
+mySampleRes$within_confint_min <- ifelse(mySampleRes$confintLow_min < true_min & mySampleRes$confintHi_min > true_min,"Outside","Inside") # create variable to check if we have found and estimate (mean) which its confindence intervals doesn't include 0
+  
+```
+
+
+```{r}
+ggplot(mySampleRes,
+       aes(sample,min,color = within_confint_min))+
+  geom_point()+
+  geom_errorbar(aes(ymin = confintLow_min,ymax = confintHi_min))+
+  geom_hline(yintercept = true_min,color = "green")+
+  coord_flip()+
+  labs(title = "MIn of 100 samples")
+```
+
+We see most of sampled min are too far fro the true min! The distribution of the minimum is not centered on the true min:
+
+
+```{r}
+p_sample_min <- ggplot()+
+  geom_histogram(data = mySampleRes,
+                 aes(x=min),
+                 binwidth = .2) +
+  xlim(round(min(population))-1,round(max(population))) +
+  geom_vline(xintercept = true_min,color = "green") +
+  labs(title = "Sampled Means")
+
+p_sample_min
+```
+

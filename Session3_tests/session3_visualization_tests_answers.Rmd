@@ -20,6 +20,140 @@ plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pra
 
 ```
 
+
+# Data management knowledge
+
+Ok I will try to summarise the data handling knowledge needed here at the begining:
+
+
+## wide vs long format
+
+```{r}
+plasma
+```
+
+Here the data are in wide format, i.e. one column per group. But all columns are the same measurement. You could use long format, i.e. one column for the measurement (plasma), one for the groups. The function from tidyr if `pivot_longer`
+
+
+```{r}
+pivot_longer(plasma,c("Control","Treatment 1","Treatment 2"))
+```
+You can set the name of variable and value column directly in the function:
+
+```{r}
+plasma_long <- plasma %>% 
+  pivot_longer(c("Control","Treatment 1","Treatment 2"),
+               names_to = "group",
+               values_to = "plasma")
+plasma_long
+```
+
+## data frame selection
+
+in R, we can have numbers, text (character) or factors. A factor is a variable than can only takes certain values.
+We can put this variables in a vector
+
+```{r}
+x <- c(3,2,4,5)
+x
+```
+x is a vector of 4 numbers. I can select these elements with squared brackets. here I select the first element:
+
+```{r}
+x[1]
+```
+Here I select the first and third
+
+```{r}
+x[c(1,3)]
+```
+If we put several vectors of same length together, we have a table, called data frame in R:
+
+```{r}
+df_bisphenol
+```
+
+here 3 columns, 3 lines. Each column is a vector. Selecting lines or columns with squared brackets
+
+df_bisphenol[selectlines , selectcolumns]
+
+### columns
+
+To select one column:
+
+```{r}
+df_bisphenol$Cancer
+```
+Or:
+
+```{r}
+df_bisphenol[,"Cancer"]
+```
+or using the number of the column (here the second column):
+
+```{r}
+df_bisphenol[,2]
+```
+
+
+If I select various columns, I obtain a new data frame:
+
+```{r}
+df_bisphenol[,c("Cancer","NoCancer")]
+```
+
+same as 
+```{r}
+df_bisphenol[,c(2,3)]
+```
+
+### lines
+
+To select lines, I can use the numbers of the lines I want to select,i.e. the first line and all columns:
+
+```{r}
+df_bisphenol[1,]
+```
+
+or the line 1 and 3
+
+```{r}
+df_bisphenol[c(1,3),]
+```
+
+I can laso select lines using a boolean vector, i.e. a vector of true and false. Her I select the first line:
+
+```{r}
+df_bisphenol[c(TRUE,FALSE,FALSE),]
+```
+Why ? Because you can then use boolean operation to select lines. Here the boolean: group is equal to "Control":
+
+```{r}
+df_bisphenol$group == "Control"
+```
+Can be used to select the first line:
+
+```{r}
+df_bisphenol[df_bisphenol$group == "Control",]
+```
+If we want the group to have several values (like "Control" and "High exposition"), the boolean looks like
+
+```{r}
+df_bisphenol$group %in% c("Control","High exposition")
+```
+This operation reads: the vector df_bisphenol$group has value within c("Control","High exposition"). The result says "yes, no, yes". You can use that to select lines:
+
+```{r}
+df_bisphenol[df_bisphenol$group %in% c("Control","High exposition"),]
+```
+an other example where it makes more sense (with df_bisphenol you could just use the line number): for the table Bisphenol_long, which contains a result with one line per patient (so 90 lines), we want to keep only the group "Control" and "High_expo"
+
+```{r}
+Bisphenol_long[Bisphenol_long$group %in% c("Control","High_expo"),]
+```
+
+# The tests
+
 We want to make tests. 
 
 We will use
@@ -36,19 +170,11 @@ chisq.test()
  
 for the chi2 test
 
-and 
-
-```{r,eval=F}
-fisher.test()
-```
-
-for the Fisher exact test.
 
 Use the help to find how the functions work !!
 
 ```{r,eval=F}
 ?chisq.test
-?fisher.test
 ?t.test
 ```
 
@@ -59,39 +185,24 @@ Measurement of plasma concentration for 3 groups: Control, treatment 1 and treat
 **Question**: We want to see if there is a significant difference between each group. Do graphs, do tests.
 
 
-## wide vs long format
-
-
-```{r}
-plasma
-```
-
-Here the data are in wide format, i.e. one column per group. But all columns are the same measurement. You could use long format, i.e. one column for the measurement (plasma), one for the groups. The function from tidyr if `pivot_longer`
-
-
-```{r}
-plasma %>% 
-  pivot_longer(c("Control","Treatment 1","Treatment 2"))
-```
-You can set the name of variable and value column directly in the function:
-
-```{r}
-plasma_long <- plasma %>% 
-  pivot_longer(c("Control","Treatment 1","Treatment 2"),
-               names_to = "group",
-               values_to = "plasma")
-plasma_long
-```
-
 ## make some graph
 
 Use the long or wide format to do some graphs
 
 ```{r}
-ggplot(plasma_long,
+ggplot(data = plasma_long,
+       aes(group,plasma))+
+  geom_boxplot()
+```
+
+
+with some colors
+
+```{r}
+ggplot(data = plasma_long,
        aes(group,plasma,color = group))+
-  geom_jitter()+
-  geom_boxplot(alpha = .4)
+  geom_boxplot()+
+  geom_jitter()
 ```
 
 The same with wide format:
@@ -109,7 +220,12 @@ geom_boxplot(aes("treatment 2",`Treatment 2`,color ="treatment 2"),alpha = .2)
 ## make a test
 
 which test ?
+
+t-test
+
 What does the test suppose ?
+
+The test supposes normal distribution
 
 make an histogram
 
@@ -121,42 +237,33 @@ ggplot(plasma_long,aes(plasma))+
 ```{r}
 ggplot(plasma_long,aes(plasma))+
   geom_histogram()+
-  facet_wrap(~group)
+  facet_wrap(~ group,scales = "free")
 ```
 
 Compare the different groups, one to one!
 
 ### use the wide format
 
-We can use t.test with x and y the two column we want to compare.
-```{r`,eval=F}
-?t.test
+We can use t.test(x,y) with x and y the two column we want to compare.
+
+```{r}
+t.test(plasma[,"Treatment 1"],plasma[,"Control"])
+```
+
+Here it says:
+the difference of means between the treatment 1 and control:
+
+```{r}
+mean(plasma$`Treatment 1`) - mean(plasma$Control)
 ```
 
 
-How to select one column ?
-
-```{r}
-plasma[,"Control"]
-plasma$Control
-```
+is the estimation of a difference laying between -8.7 and 0.9 (the confidence interval). We thus don't really know is there is a difference or not. 
+P value: The probability that we obtain a difference between treatment 1 and control at least that big if the null hypothesis is true, that is that the two samples treatment 1 and control comes from the same population (i.e. they are not different, we just sampled the same pouplation twice). There is 0.11 probability to obtain at least this result if treatment and control patients come from the same initial population.
 
 
 ```{r}
-t.test(plasma$`Treatment 1`,
-       plasma$Control)
-```
-
-```{r}
-t.test(plasma[,"Control"],
-       plasma[,"Treatment 1"])
-
-```
-
-
-```{r}
-t.test(plasma$`Treatment 2`,
-       plasma$Control)
+t.test(plasma$`Treatment 2`,plasma$Control)
 ```
 
 ```{r}
@@ -164,37 +271,32 @@ t.test(plasma$`Treatment 2`,plasma$`Treatment 1`)
 ```
 
 
+
+
+
 ### use the long format
 
 You can use a formula:
 
 a formula of the form lhs ~ rhs where lhs is a numeric variable giving the data values and rhs either 1 for a one-sample or paired test or a factor with two levels giving the corresponding groups.
+We have 3 groups! Select only two.
+
 
 ```{r}
-t.test(plasma ~ group,data = plasma_long)
+t.test(plasma ~ group,
+       data = plasma_long,
+       subset = plasma_long$group %in% c("Control","Treatment 2"))
 ```
 
-we have 3 groups! Select only two.
+
+
 Base R style:
 
 ```{r}
-plasma_long[plasma_long$group %in% c("Control","Treatment 2"),]
-```
-dplyr style :
-
-```{r}
-plasma_long %>% 
-  filter(group %in% c("Control","Treatment 2"))
-```
-
-```{r}
-plasma_long_sub <- plasma_long %>% 
-  filter(group %in% c("Control","Treatment 2")) 
-
+plasma_long_sub <- plasma_long[plasma_long$group %in% c("Control","Treatment 2"),]
 t.test(plasma ~ group,data = plasma_long_sub)
 ```
 
-What does that mean ?????
 
 # Bisphenol data
 
@@ -232,27 +334,7 @@ chisq.test(matrix(c(1,29,10,20),ncol = 2))
 Or I can select the data, base R like
 
 ```{r}
-as.matrix(df_bisphenol[df_bisphenol$group %in% c("Control","High exposition"),
-                                  c("Cancer","NoCancer")])
-
-```
-
-dplyr like
-
-```{r}
-library(dplyr)
-
-df_bisphenol %>%
-  filter(group %in% c("Control","High exposition")) %>%
-  select(Cancer,NoCancer)
-```
-
-
-```{r}
-cont_matrix <- df_bisphenol %>%
-  filter(group %in% c("Control","High exposition")) %>%
-  select(Cancer,NoCancer) %>%
-  as.matrix()
+cont_matrix <- as.matrix(df_bisphenol[c(1,3),c(2,3)])
 ```
 
 Now the test
@@ -263,17 +345,21 @@ chisq.test(cont_matrix)
 
 ## detailed result
 
-The results could be long data for each patient:
+The results could be long data, with one line for each patient:
 
 ```{r}
 Bisphenol_long
 ```
+
+If we make a table, we find back the agregated results from before
+
 ```{r}
-?chisq.test
+table(Bisphenol_long$group,Bisphenol_long$had_cancer)
 ```
 
 
 The `chisq.test` function can take two variables, one for the group, one for cancer yes no.
+
 
 ```{r}
 chisq.test(Bisphenol_long$had_cancer[Bisphenol_long$group %in% c("Control","High_expo")],
@@ -281,13 +367,6 @@ chisq.test(Bisphenol_long$had_cancer[Bisphenol_long$group %in% c("Control","High
 ```
 
 You can actually find back the matrix from these data:
-
-```{r}
-long %>% 
-  group_by(group)%>%
-  summarise(cancer = sum(had_cancer == 1),
-            Nocancer = sum(had_cancer == 0))
-```
 
 
 
