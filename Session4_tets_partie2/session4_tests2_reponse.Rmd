@@ -1,0 +1,344 @@
+---
+title: "session 3 visualization tests"
+output:
+  html_document:
+    df_print: paged
+---
+
+Let's load the different examples files. Replace the file path `C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/` with yours.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(ggbeeswarm)
+
+df_bisphenol <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/ExerciceBisphenol.csv")
+
+plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/ExercicePlasmaCholesterol.xlsx")
+
+pairedData <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/pairedData.xlsx")
+
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F)
+```
+
+
+# The functions to use:
+## continuous variables
+
+T test
+```{r,eval=F}
+t.test
+```
+
+Wilcoxon (paired or not)
+
+```{r,eval=F}
+wilcox.test
+```
+
+ANOVA (analysis of variance)
+
+```{r,eval=F}
+aov
+```
+
+Kruskal Wallis
+
+```{r,eval=F}
+kruskal.test
+```
+
+
+## binary variables
+
+Fisher
+
+```{r,eval=F}
+fisher.test
+```
+
+Mc Nemar
+```{r,eval=F}
+mcnemar.test
+```
+
+Chi 2
+```{r,eval=F}
+chisq.test
+```
+
+
+# Plasma
+## Try to tranform to long:
+
+```{r}
+plasma
+```
+
+```{r}
+ggplot(plasma)+
+  geom_boxplot(aes(x = "control",y = Control))+
+  geom_boxplot(aes(x = "treatment 1",`Treatment 1`))+
+  geom_boxplot(aes(x = "treatment 2",`Treatment 2`))
+```
+
+
+
+```{r}
+plasma_long <- pivot_longer(plasma,
+                            cols = c("Control","Treatment 1","Treatment 2"),
+                            values_to = "plasma",
+                            names_to = "group")
+plasma_long
+```
+
+## make a plot (same as session 2)
+
+
+```{r}
+ggplot(data=plasma_long,
+       aes(x = group,
+           y = plasma,
+           fill=group))+  #define data and variables
+  geom_boxplot()+
+  geom_jitter(shape=21,show.legend = F,cex=3) #create one layer of graph
+
+```
+
+## test assumptions
+
+- gaussian distrib in each group
+
+```{r}
+hist(plasma$Control)
+```
+
+```{r}
+hist(plasma$`Treatment 1`)
+```
+
+```{r}
+hist(plasma$`Treatment 2`)
+```
+
+```{r}
+plasma_long %>%
+  ggplot()+
+  geom_histogram(aes(plasma),
+                 binwidth = 5,
+                 color = "black")+
+  facet_wrap(~group,scales = "free")
+```
+
+- variance similar
+
+base:
+
+```{r}
+var(plasma$Control)
+var(plasma$`Treatment 1`)
+var(plasma$`Treatment 2`)
+```
+
+Attention, la vairable treatment 2 contient des manquants!
+
+```{r}
+plasma$`Treatment 2`
+```
+
+Il faut spécifiquement dire que il y a des manquants:
+
+```{r}
+var(plasma$`Treatment 2`,na.rm = T)
+```
+
+
+dplyr like:
+
+```{r}
+plasma_long %>%
+  group_by(group)%>%
+  dplyr::summarise(mean = mean(plasma,na.rm = T),
+                   sd = sd(plasma,na.rm = T),
+                   var = var(plasma,na.rm = T))
+```
+
+
+Perform Anova and/or Kruskal-Wallis
+
+```{r}
+aov_res <- aov(plasma ~ group,
+               data = plasma_long)
+
+summary(aov_res)
+```
+
+- what does it means ? What is F ? What is p ?
+
+F value is the value of the test statistics (ratio of inter group variance and intra group variance). The test statistics follow a F distribution
+
+```{r}
+N <- nrow(na.omit(plasma))
+x <- seq(0,10,0.1)
+data.frame(x = x,
+           df = df(x,N,N),
+           pf = pf(x,N,N)) %>%
+  ggplot()+
+  geom_line(aes(x,df,color = "df"))+
+  geom_line(aes(x,pf,color = "pf"))+
+  geom_hline(yintercept = .95)+
+  geom_vline(xintercept = 2.2)+
+  theme_bw()+theme(legend.position = c(1,1),
+                   legend.justification = c(1,1))+
+  labs(color = "")
+```
+
+Values of F above 2.2, i.e. when inter group variance is at least 2.2 intra group variance, implies that there is less than 5% of chance to obtain such test statistics or higher under the null Hypothesis.
+
+
+```{r}
+krus_res <- kruskal.test(plasma ~ group,data = plasma_long)
+krus_res
+```
+
+- make Tukey pairwise comparison
+
+```{r}
+TukeyHSD(aov_res)
+```
+
+
+
+# paired data
+
+- The level of a marker is measured at baseline and 1 week after injection of a product
+- Sample: N=20 rabbits
+- Aim: to assess and test the effect of the product between baseline and 1 week
+
+
+```{r}
+pairedData
+```
+
+## verify assumptions
+
+- gaussian ?
+- number of observations ?
+
+```{r}
+hist(pairedData$T0)
+```
+
+```{r}
+hist(pairedData$W1)
+```
+
+Not Gaussian! 
+
+Other way: long format, then ggplot
+
+```{r}
+paired_long <- pairedData %>% 
+  pivot_longer(cols = c("T0","W1"),
+               names_to = "time")
+```
+
+
+```{r}
+paired_long %>%
+  ggplot(aes(value))+
+  geom_histogram(binwidth = 3,color = "black")+
+  facet_wrap(~time)
+```
+
+
+## do the tests
+
+- perform the proper test
+
+The proper test is 
+
+```{r}
+wilcox.test(pairedData$T0,pairedData$W1,paired=T)
+```
+
+```{r}
+wilcox.test(value ~ time, data = paired_long)
+```
+
+- see the difference if using not paired 
+
+```{r}
+wilcox.test(pairedData$T0,pairedData$W1,paired=F)
+```
+
+explanation:
+
+If one looks without pairing, group do not look different:
+
+```{r}
+pairedData %>% 
+  pivot_longer(cols = c("T0","W1"),
+               names_to = "time")%>%
+  ggplot(aes(time,value))+
+  geom_jitter()+
+  geom_boxplot(alpha = .3,outlier.shape = NA)
+```
+
+But if we connect lines, we see that most of the measures increase
+
+```{r}
+
+paired_long$timejitter <- jitter(as.numeric(factor(paired_long$time)))
+
+paired_long %>%
+  ggplot(aes(timejitter,value))+
+  geom_point(aes(color = time))+
+  geom_line(aes(group = id))+
+  scale_x_continuous(breaks = c(1,2),labels = c("T0","W1"))
+```
+
+An easy way to see it: look at the paired differences:
+
+```{r}
+pairedData %>%
+  ggplot(aes(x = 1,y = W1-T0))+
+  geom_jitter()+
+  geom_boxplot(alpha = .2)
+```
+
+
+
+```{r}
+t.test(pairedData$T0,pairedData$W1,paired=T)
+```
+
+
+## see test change
+
+See if the ratio of level > 1 changes between baseline and 1 W
+
+
+
+Let's test if the rabbits who were above 1 at T0 are still above 1 at W1
+
+```{r}
+
+concordanceT0W1 <- table(pairedData$T0>1,pairedData$W1>1,dnn = c("T0","W1"))
+concordanceT0W1
+
+```
+
+
+
+```{r}
+mcnemar.test(concordanceT0W1)
+```
+
+
+

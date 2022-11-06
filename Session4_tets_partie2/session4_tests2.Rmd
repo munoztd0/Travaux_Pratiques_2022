@@ -1,0 +1,126 @@
+---
+title: "session 4  tests"
+output:
+  html_document:
+    df_print: paged
+---
+
+Let's load the different examples files. Replace the file path `C:/Users/dmog/Documents/cours_stat/Data-20220301/` with yours.
+
+```{r}
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(ggbeeswarm)
+
+df_bisphenol <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/ExerciceBisphenol.csv")
+
+plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/ExercicePlasmaCholesterol.xlsx")
+
+pairedData <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/pairedData.xlsx")
+
+
+
+```
+
+
+# The function to use:
+## continuous variables
+
+T test
+```{r}
+t.test
+```
+
+Wilcoxon (paired or not)
+
+```{r}
+wilcox.test
+```
+
+ANOVA (analysis of variance)
+
+```{r}
+aov
+```
+
+Kruskal Wallis
+
+```{r}
+kruskal.test
+```
+
+
+
+
+## binary variables
+
+Fisher
+
+```{r}
+fisher.test
+```
+
+Mc Nemar
+```{r}
+mcnemar.test
+```
+
+Chi 2
+```{r}
+chisq.test
+```
+
+
+# Plasma data
+
+Same data as last session. Now we want to test if there is a difference between the three groups!
+
+```{r}
+plasma
+```
+## Try to tranform to long
+
+Have a look at last session
+
+## make a plot (same as session 2)
+
+
+## test assumptions
+
+- gaussian distrib in each group
+- variance similar
+
+## do the test
+
+- Perform Anova and/or Kruskal-Wallis
+- what does it means ? What is F ? What is p ?
+- make Tukey pairwise comparison, using the function `TukeyHSD`
+
+
+# paired data
+
+- The level of a marker in blood is measured at baseline (T0) and 1 week (W1) after injection of a product
+- Sample: N=20 rabbits
+- Aim: to assess and test the difference in marker between baseline and 1 week
+
+```{r}
+pairedData
+```
+
+
+## verify assumptions
+
+- gaussian ?
+- number of observations ?
+
+## do the tests
+
+- perform the proper test
+- see the difference if using not paired 
+
+## see test change
+
+See if the ratio of level > 1 changes between baseline and W1. Which test to use ?
+
+

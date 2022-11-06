@@ -23,7 +23,7 @@ plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pra
 
 # Data management knowledge
 
-Ok I will try to summarise the data handling knowledge needed here at the begining:
+In this first paragraph, you will find the data handling knowledge needed for the session:
 
 
 ## wide vs long format
@@ -32,12 +32,15 @@ Ok I will try to summarise the data handling knowledge needed here at the begini
 plasma
 ```
 
-Here the data are in wide format, i.e. one column per group. But all columns are the same measurement. You could use long format, i.e. one column for the measurement (plasma), one for the groups. The function from tidyr if `pivot_longer`
+Here the data are in wide format, i.e. one column per group. But all columns are the same measurement (a measurement of plasma). 
+
+You could use long format, i.e. one column for the measurement (plasma), one for the groups. The function from tidyr if `pivot_longer`
 
 
 ```{r}
 pivot_longer(plasma,c("Control","Treatment 1","Treatment 2"))
 ```
+
 You can set the name of variable and value column directly in the function:
 
 ```{r}
@@ -51,13 +54,13 @@ plasma_long
 ## data frame selection
 
 in R, we can have numbers, text (character) or factors. A factor is a variable than can only takes certain values.
-We can put this variables in a vector
+We can put these variables in a vector
 
 ```{r}
 x <- c(3,2,4,5)
 x
 ```
-x is a vector of 4 numbers. I can select these elements with squared brackets. here I select the first element:
+x is a vector of 4 numbers. I can select the elements of this vector with squared brackets. here I select the first element:
 
 ```{r}
 x[1]
@@ -67,7 +70,7 @@ Here I select the first and third
 ```{r}
 x[c(1,3)]
 ```
-If we put several vectors of same length together, we have a table, called data frame in R:
+If we put several vectors of same length together, we have a table, called dataframe in R:
 
 ```{r}
 df_bisphenol
@@ -95,7 +98,6 @@ or using the number of the column (here the second column):
 df_bisphenol[,2]
 ```
 
-
 If I select various columns, I obtain a new data frame:
 
 ```{r}
@@ -121,12 +123,13 @@ or the line 1 and 3
 df_bisphenol[c(1,3),]
 ```
 
-I can laso select lines using a boolean vector, i.e. a vector of true and false. Her I select the first line:
+I can also select lines using a boolean vector, i.e. a vector of true and false. The line selected are the one corresponding to "TRUE".
+Here I select the first line:
 
 ```{r}
 df_bisphenol[c(TRUE,FALSE,FALSE),]
 ```
-Why ? Because you can then use boolean operation to select lines. Here the boolean: group is equal to "Control":
+Why do we need this? Because you can then use boolean operation to select lines. Here the boolean: group is equal to "Control":
 
 ```{r}
 df_bisphenol$group == "Control"
@@ -141,12 +144,12 @@ If we want the group to have several values (like "Control" and "High exposition
 ```{r}
 df_bisphenol$group %in% c("Control","High exposition")
 ```
-This operation reads: the vector df_bisphenol$group has value within c("Control","High exposition"). The result says "yes, no, yes". You can use that to select lines:
+This operation reads: the vector df_bisphenol$group has value within c("Control","High exposition"). The result says "yes, no, yes". You can use this result to select lines of you table:
 
 ```{r}
 df_bisphenol[df_bisphenol$group %in% c("Control","High exposition"),]
 ```
-an other example where it makes more sense (with df_bisphenol you could just use the line number): for the table Bisphenol_long, which contains a result with one line per patient (so 90 lines), we want to keep only the group "Control" and "High_expo"
+Another example where it makes more sense (with df_bisphenol you could just use the line number): for the table Bisphenol_long, which contains a result with one line per patient (so 90 lines), we want to keep only the group "Control" and "High_expo"
 
 ```{r}
 Bisphenol_long[Bisphenol_long$group %in% c("Control","High_expo"),]
