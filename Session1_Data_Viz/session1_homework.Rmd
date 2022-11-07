@@ -13,10 +13,9 @@ output:
 
 ### Download the dataset on moodle (folder Data)
 
-- data_RT.csv
+-   data_RT.csv
 
 And save it into your "data" folder.
-
 
 ### Load libraries
 
@@ -28,56 +27,50 @@ library(here) #to manages paths
 
 ```
 
-
 ### Read the data and check it out
 
 A little bit about the data.
 
 This is a modified dataset from a cognitive neuroscience experiment.
 
-It basically tried to compare typical adults (TA) vs patients with Alzheimer's disease (AD) on a reaction time (RT) task. 
+It basically tried to compare typical adults (TA) vs patients with Alzheimer's disease (AD) on a reaction time (RT) task.
 
 Participants also had to go through a cognitive intervention or went through a control condition
 
 So you have
 
-- id: Each participants experiment ID
-- intervention: Whether or not the participant went through the intervention or the control condition
-- type: Whether the participant was diagnosed with AD or not
-- RT: Each participant's reaction time to a cognitive task
-
+-   id: Each participants experiment ID
+-   intervention: Whether or not the participant went through the intervention or the control condition
+-   type: Whether the participant was diagnosed with AD or not
+-   RT: Each participant's reaction time to a cognitive task
 
 ```{r}
 
 #hint: use read_csv or double click on the file and import
 #hint2: watch out what name is assigned to the data !
-
-
-
+df <- read_csv('data/data_RT.csv')
+df
 ```
 
-
-
-### Do a stacked barplot: 
-
+### Do a stacked barplot:
 
 ```{r}
 
 #hint: x = intervention and fill with type
-
-
-
+ggplot(data=df, aes(intervention, fill=type)) +
+geom_bar()
 ```
 
-### Do a basic histogram, then add a vertical line for the median and another for the mean values: 
+### Do a basic histogram, then add a vertical line for the median and another for the mean values:
 
 ```{r}
 
 #hint: x = RT
-
-
+ggplot(data=df, aes(RT)) + 
+geom_histogram() + 
+geom_vline(xintercept = mean(df$RT), col="green") +
+geom_vline(xintercept = median(df$RT), col="blue")
 
 ```
-
 
 ### You are all done !

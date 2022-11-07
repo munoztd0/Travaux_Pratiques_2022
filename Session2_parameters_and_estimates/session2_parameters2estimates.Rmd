@@ -116,11 +116,14 @@ head(mySampleRes)
 ```
 
 ```{r}
-
 mySampleRes$within_confint <- factor(mySampleRes$confintLow < 0 & mySampleRes$confintHi > 0, labels = c("Outside", "Inside")) # create variable to check if we have found and estimate (mean) which its confindence intervals doesn't include 0
 
 table(mySampleRes$within_confint)
+```
 
+
+```{r}
+mySampleRes
 ```
 
 What does this mean ?

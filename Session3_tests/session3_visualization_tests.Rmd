@@ -12,11 +12,11 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 
-df_bisphenol <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/ExerciceBisphenol.csv")
+df_bisphenol <- read.csv("data/ExerciceBisphenol.csv")
 
-Bisphenol_long <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/Bisphenol_long.csv")
+Bisphenol_long <- read.csv("data/Bisphenol_long.csv")
 
-plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session3_tests/data/ExercicePlasmaCholesterol.xlsx")
+plasma <- readxl::read_xlsx("data/ExercicePlasmaCholesterol.xlsx")
 
 ```
 
@@ -86,14 +86,56 @@ plasma_long
 ## make some graph
 
 Use the long or wide format to do some graphs
+```{r}
+ggplot(plasma_long, aes(x=group, y=plasma)) + 
+  geom_boxplot()
+```
+```{r}
+ggplot(plasma) + 
+  geom_boxplot(aes('Control', Control)) + 
+  geom_boxplot(aes('Treatment 1', `Treatment 1`)) + 
+  geom_boxplot(aes('Treatment 2', `Treatment 2`)) + 
 
-
-
+ggplot(plasma)+
+  geom_jitter(aes("Control",Control,color = "Control"))+
+  geom_boxplot(aes("Control",Control,color = "Control"),alpha = .2)+
+  geom_jitter(aes("treatment 1",`Treatment 1`,color = "treatment 1"))+
+  geom_boxplot(aes("treatment 1",`Treatment 1`,color = "treatment 1"),alpha = .2)+
+  geom_jitter(aes("treatment 2",`Treatment 2`,color ="treatment 2"))+
+geom_boxplot(aes("treatment 2",`Treatment 2`,color ="treatment 2"),alpha = .2)
+```
 
 ## make a test
 
 which test ?
 What does the test suppose ?
+```{r}
+ggplot(plasma_long,aes(plasma))+
+  geom_histogram()
+```
+
+
+```{r}
+ggplot(plasma_long,aes(plasma))+
+  geom_histogram()+
+  facet_wrap(~ group,scales = "free")
+```
+
+
+```{r}
+ggplot(plasma) + 
+  geom_histogram(aes(Control), bins = 10)
+```
+
+
+```{r}
+t.test(plasma$Control, plasma$`Treatment 1`)
+
+t.test(plasma$`Treatment 1`, plasma$`Treatment 2`)
+
+t.test(plasma$Control, plasma$`Treatment 2`)
+```
+
 
 make an histogram
 
@@ -136,6 +178,13 @@ plasma_long %>%
   filter(group %in% c("Control","Treatment 2"))
 ```
 
+```{r}
+t.test(plasma ~ group,
+       data = plasma_long,
+       subset = plasma_long$group %in% c("Control","Treatment 2"))
+```
+
+
 What does the result means ?????
 
 # Bisphenol data
@@ -154,8 +203,22 @@ What is the proper test ???
 ```{r}
 df_bisphenol
 ```
+```{r}
+cont_matrix <- as.matrix(df_bisphenol[c(1,3),c(2,3)])
+```
 
+```{r}
+chisq.test((cont_matrix))
+```
+```{r}
+table(Bisphenol_long$group,Bisphenol_long$had_cancer)
+```
 The two columns give you the number of cancer developed in each group (each group is 30 patients)
+
+```{r}
+chisq.test(Bisphenol_long$had_cancer[Bisphenol_long$group %in% c("Control","High_expo")],
+           Bisphenol_long$group[Bisphenol_long$group %in% c("Control","High_expo")])
+```
 
 **Question**: is the proportion of cancer different in each group ?
 

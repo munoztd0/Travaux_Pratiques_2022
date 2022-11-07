@@ -88,14 +88,14 @@ Have a look at last session
 
 ## test assumptions
 
-- gaussian distrib in each group
-- variance similar
+- Gaussian distribution for each group
+- similar variance
 
 ## do the test
 
 - Perform Anova and/or Kruskal-Wallis
 - what does it means ? What is F ? What is p ?
-- make Tukey pairwise comparison, using the function `TukeyHSD`
+- perform Tukey pairwise comparison, using the function `TukeyHSD`
 
 
 # paired data
@@ -111,7 +111,7 @@ pairedData
 
 ## verify assumptions
 
-- gaussian ?
+- Gaussian ?
 - number of observations ?
 
 ## do the tests
@@ -121,6 +121,6 @@ pairedData
 
 ## see test change
 
-See if the ratio of level > 1 changes between baseline and W1. Which test to use ?
+See if the proportion of the blood marker levels > 1 versus < 1 changes between baseline and W1. Which test should you use to show significance ? Perform the test.
 
 

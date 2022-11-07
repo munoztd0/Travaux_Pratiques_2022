@@ -104,7 +104,7 @@ Tips:
 #hint2: assign your plot to an object, e.g. density <- ggplot(data, aes(...)) + geom_density()
 
 
-density <- ggplot(data = il18, aes(x = freeIL18)) + 
+density <- ggplot(data = il18, aes(x = freeIL18,)) + 
    geom_density( fill="green")
 
 density
