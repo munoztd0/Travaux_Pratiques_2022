@@ -1,0 +1,156 @@
+---
+title: "Session 5: Sample Size"
+subtitle: "Your Name"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pwr)
+library(tidyverse)
+library(ggplot2)
+```
+
+
+
+
+# Your Turn 
+
+Try calculating the sample size or power needed in these outcome scenarios.
+See if you can plot the results as directed by editing the code chunks.
+
+
+## Continous Outcomes
+
+### Scenario 1: FEV1 in COPD
+
+You want to increase the FEV1 (forced expiratory volume in 1 second) of patients with COPD (chronic obstructive pulmonary disease) by 10% of predicted from baseline using weekly inhaled stem cells vs. placebo. Unfortunately, the standard deviation of FEV1 measurements is 20%. You want to have 80% power to detect this difference, with a 2-sided alpha of 0.05, with equal n in each of the two arms. Fill in the blanks in the code chunk below to calculate the sample size needed (n x number of arms). Remember that the effect size (Cohen's d) = change in endpoint (delta)/SD of the endpoint.
+
+```{r, error=TRUE, eval = FALSE}
+pwr::pwr.t.test(n = __, # note that n is per arm
+                sig.level = __, 
+                type = "__", 
+                alternative = "__", 
+                power = __, 
+                d = __)
+```
+
+You should get 128 participants (assuming no dropout) from 64 per arm. Cohen's d is 10/20 = 0.5. It can be tricky to keep the type of "two.sample" and the alternative of "two.sided" straight. But you can do this!
+
+### Scenario 2: BNP in CHF
+
+You want to decrease the BNP (brain natriuretic protein) of patients with CHF (congestive heart failure) by 300 pg/mL from baseline with a new oral intropic agent vs. placebo. BNP levels go up during worsening of heart failure, and a variety of effective treatments lower BNP, which can function as surrogate marker in clinical trials. The standard deviation of BNP measurements is estimated at 350 pg/mL. You want to have 80% power to detect this difference, with a 2-sided alpha of 0.05, with equal n in each of the two arms. Also consider an alternative scenario with a change in BNP of only 150 pg/mL. Remember that the effect size (Cohen's d) = change in endpoint (delta)/SD of the endpoint. Fill in the blanks in the code chunk below (2 scenarios) to calculate the sample size needed (n x number of arms) for both alternatives.
+
+```{r, error=TRUE, eval = FALSE}
+pwr::pwr.t.test(n = __, # note that n is per arm
+                sig.level = __, 
+                type = "two.__", 
+                alternative = "two.__", 
+                power = __, 
+                d = __/__)
+
+pwr::pwr.t.test(n = __, # note that n is per arm
+                sig.level = __, 
+                type = "two.__", 
+                alternative = "two.__", 
+                power = __, 
+                d = __/__)
+```
+
+You should get 46 participants (assuming no dropout) from 23 per arm x 2 arms, or 174 participants (87x2) with the alternative effect size. The effect size (Cohen's d) is 300/350 = 0.86 in the original, and 150/350 (0.43) in the alternative effect.
+
+Note that you can let R calculate the Cohen's d - just type in 300/350 and 150/350, and R will use these as values of d.
+
+### Scenario 3: Barthel Index in Stroke
+
+You want to increase the Barthel Activities of Daily Living Index of patients with stroke by 25 points from baseline with an intensive in-home PT and OPT intervention vs. usual care (which usually increases BADLI by only 5 points). You roughly estimate the standard deviation of Barthel index measurements as 38. You want to have 80% power to detect this difference, with a 2-sided alpha of 0.05, with equal n in each of the two arms. You want to consider multiple possible options for n, and plot these for a nice figure in your grant application. Fill in the blanks in the code chunk below to calculate **and plot** the sample size needed (n x number of arms).
+
+```{r, error=TRUE, eval = FALSE}
+results <- pwr::pwr.t.test(n = __, # note that n is per arm
+                sig.level = __, 
+                type = "two.__", 
+                alternative = "two.sided", 
+                power = __, 
+                d = __ )
+plot(results)
+```
+
+You should get an optimal sample size of 116 participants (assuming no dropout) from 58 per arm x 2 arms, with a nice plot to show this in your grant proposal. The effect size (Cohen's d) is (25-5)/38 = 0.526.
+
+
+
+
+
+
+## Propotional Outcomes
+
+
+
+
+### Scenario 1: Mortality on Renal Dialysis
+
+You want to decrease the mortality of patients on renal dialysis, which averages 20% per year in your local dialysis center. You will randomize patients to a bundle of statin, aspirin, beta blocker, and weekly erythropoietin vs. usual care, and hope to reduce annual mortality to 10%. You want to have 80% power to detect this difference, with a 2-sided alpha of 0.05, with equal n in each of the two arms. Fill in the blanks in the code chunk below to calculate the sample size needed (n x number of arms).
+
+```{r, error=TRUE, eval = FALSE}
+pwr.p.test(h = ES.h(p1 = __, p2 = __),
+           n = __,
+           sig.level = .05,
+           power = __,
+           alternative = "two.__")
+```
+
+You always round up first (to whole participants per arm), then multiply by the number of arms. You will need a minimum of 98 per arm, for a total of 196 participants needed to complete the trial.
+
+### Scenario 2: Intestinal anastomosis in Crohn's disease
+
+You want to decrease 1-year endoscopic recurrence rate in Crohn's disease from 90% to 70%. A local surgeon claims that his new "slipknot anastomosis" technique will accomplish this, by reducing colonic backwash and thereby, reducing endoscopic recurrence. You want to have 80% power to detect this difference, with a 2-sided alpha of 0.05, with equal n in each of the two arms. Also consider an alternative, more conservative scenario with a endoscopic recurrence rate of 80% with the new method. Fill in the blanks in the code chunk below to calculate the sample size needed (n x number of arms) for both alternatives.
+
+```{r, error=TRUE, eval = FALSE}
+pwr.p.test(h = c(ES.h(p1 = 0.9, p2 = __)),
+           n = NULL,
+           sig.level = .05,
+           power = __,
+           alternative = "two.sided")
+
+pwr.p.test(h = c(ES.h(p1 = __, p2 = __)),
+           n = __,
+           sig.level = __,
+           power = .80,
+           alternative = __)
+```
+
+With the originally claimed recurrence proportion of 70%, you will need 30 participants per arm, or 60 for the whole study. The more conservative estimate will require 98 subjects per arm, or 196 for the whole study.
+
+### Scenario 3: Metformin in Donuts
+
+Your local endocrinologist has identified consumption of glazed donuts as a major risk factor for development of type 2 diabetes in your region. She proposes to randomize participants to glazed donuts spiked with metformin vs usual donuts, expecting to reduce the 1 year proportion of prediabetics with a HgbA1c \> 7.0 from 25% to 10%. You want to have 80% power to detect this difference, with a 2-sided alpha of 0.05, with 2 times as many participants in the metformin donut arm. You want to consider multiple possible sample sizes (n = 25, 50, 75) for the control glazed donuts, with 2n (double the sample size in each scenario) for the metformin donuts group. Fill in the blanks in the code chunk below to calculate the resulting power for each of the three sample size scenarios.
+
+```{r, error=TRUE, eval = FALSE}
+pwr.2p2n.test(h = ES.h(p1 = __, p2 = __),
+           n1 = seq(from = __, to = __, by = 25), 
+           n2 = seq(from = __, to = __, by = 50),
+           sig.level = __,
+           power = NULL,
+           alternative = "two.sided")
+
+```
+
+You should get a power of 37.7% for the smallest n, 64.5% for n1=50/n2=100, and 81.4% for the largest n scenario.
+
+
+## Explore More
+
+::: {.explore}
+You can explore other examples [here](https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html) in the official {pwr} vignette.
+
+Power calculations for more complex endpoints and study designs can be found in R packages listed in the Clinical Trials CRAN Task View [here](https://cran.r-project.org/web/views/ClinicalTrials.html). Consider the packages {samplesize}, {TrialSize}, {clusterpower}, {CRTsize}, {cosa}, {PowerTOST}, {PowerUpR}, and which may be relevant for your particular analysis.
+
+Two other helpful references are books:<br> Cohen, J. (1988). Statistical Power Analysis for the Behavioral Sciences (2nd ed.). LEA.<br> Ryan, T.P. (2013) Sample Size Determination and Power. Wiley.
+:::
