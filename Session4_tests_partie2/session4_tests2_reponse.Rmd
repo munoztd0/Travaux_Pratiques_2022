@@ -145,21 +145,21 @@ var(plasma$`Treatment 1`)
 var(plasma$`Treatment 2`)
 ```
 
-Attention, la vairable treatment 2 contient des manquants!
+Beware, there are missing numbers `NA` in Treatment 2 column:
 
 ```{r}
 plasma$`Treatment 2`
 ```
 
-Il faut spécifiquement dire que il y a des manquants:
+You need to specify to `var` to ingnore missing numbers
 
 ```{r}
 var(plasma$`Treatment 2`,na.rm = T)
 ```
 
+Work also for `mean`, `median` etc.
 
-dplyr like:
-
+dplyr like (for those who want to know)
 ```{r}
 plasma_long %>%
   group_by(group)%>%
@@ -178,7 +178,6 @@ aov_res <- aov(plasma ~ group,
 summary(aov_res)
 ```
 
-- what does it means ? What is F ? What is p ?
 
 F value is the value of the test statistics (ratio of inter group variance and intra group variance). The test statistics follow a F distribution
 
@@ -212,7 +211,7 @@ krus_res
 TukeyHSD(aov_res)
 ```
 
-
+We are doing pairwise tests: one line for a comparison between two tests. But it takes into account that we are doing multiple tests.
 
 # paired data
 
@@ -227,35 +226,19 @@ pairedData
 
 ## verify assumptions
 
-- gaussian ?
+- the difference gaussian ?
 - number of observations ?
 
 ```{r}
-hist(pairedData$T0)
+hist(pairedData$T0 - pairedData$W1)
 ```
-
+or 
 ```{r}
-hist(pairedData$W1)
+ggplot(pairedData)+
+  geom_histogram(aes(T0 - W1))
 ```
 
-Not Gaussian! 
-
-Other way: long format, then ggplot
-
-```{r}
-paired_long <- pairedData %>% 
-  pivot_longer(cols = c("T0","W1"),
-               names_to = "time")
-```
-
-
-```{r}
-paired_long %>%
-  ggplot(aes(value))+
-  geom_histogram(binwidth = 3,color = "black")+
-  facet_wrap(~time)
-```
-
+It is almost normal, so we could do t.test
 
 ## do the tests
 
@@ -264,11 +247,18 @@ paired_long %>%
 The proper test is 
 
 ```{r}
-wilcox.test(pairedData$T0,pairedData$W1,paired=T)
+t.test(pairedData$T0,pairedData$W1,paired=T)
 ```
 
+I can also use a long format if I want:
+
 ```{r}
-wilcox.test(value ~ time, data = paired_long)
+paired_long <- pivot_longer(pairedData,cols = c("T0","W1"),values_to = "value",names_to = "time")
+```
+
+
+```{r}
+t.test(value ~ time, data = paired_long,paired=T)
 ```
 
 - see the difference if using not paired 
@@ -290,20 +280,7 @@ pairedData %>%
   geom_boxplot(alpha = .3,outlier.shape = NA)
 ```
 
-But if we connect lines, we see that most of the measures increase
-
-```{r}
-
-paired_long$timejitter <- jitter(as.numeric(factor(paired_long$time)))
-
-paired_long %>%
-  ggplot(aes(timejitter,value))+
-  geom_point(aes(color = time))+
-  geom_line(aes(group = id))+
-  scale_x_continuous(breaks = c(1,2),labels = c("T0","W1"))
-```
-
-An easy way to see it: look at the paired differences:
+But if we look at individual differences, we see that it is not 0 (so there is a difference if one follows the individuals)
 
 ```{r}
 pairedData %>%
@@ -312,10 +289,10 @@ pairedData %>%
   geom_boxplot(alpha = .2)
 ```
 
-
+The non parametrical test will give similar result:
 
 ```{r}
-t.test(pairedData$T0,pairedData$W1,paired=T)
+wilcox.test(pairedData$T0,pairedData$W1,paired=T)
 ```
 
 
