@@ -13,11 +13,11 @@ library(tidyr)
 library(dplyr)
 library(ggbeeswarm)
 
-df_bisphenol <- read.csv("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/ExerciceBisphenol.csv")
+df_bisphenol <- read.csv("data/ExerciceBisphenol.csv")
 
-plasma <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/ExercicePlasmaCholesterol.xlsx")
+plasma <- readxl::read_xlsx("data/ExercicePlasmaCholesterol.xlsx")
 
-pairedData <- readxl::read_xlsx("C:/Users/dmog/Documents/cours/stat_2022/Travaux_Pratiques/Session4_tets_partie2/data/pairedData.xlsx")
+pairedData <- readxl::read_xlsx("data/pairedData.xlsx")
 
 
 ```
