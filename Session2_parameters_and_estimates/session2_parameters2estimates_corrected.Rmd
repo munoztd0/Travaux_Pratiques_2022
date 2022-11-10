@@ -1,6 +1,6 @@
 ---
 title: "Session 2: Parameters Estimate"
-subtitle: "Your Name"
+subtitle: "David Munoz Tord"
 date: "October 16, 2022"
 output:
   html_document:
@@ -174,7 +174,7 @@ p_population / p_sample
 ```
 
 
-# same with the min
+# Same with the minimum
 
 What we did with the mea cannot work with the min, or max, or sd.
 Let's see. The true min is:
