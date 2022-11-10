@@ -1,0 +1,71 @@
+---
+title: "Session 6"
+output: html_notebook
+---
+This are the exercise for session 6.
+
+We will use two datasets: session6_diet.xls and session6_eggs.xls
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(readxl)
+
+df_diet <- read_xls("C:/Users/dmog/Documents/cours_stat/Data-20220301/session6_diet.xls")
+df_eggs <- read_xls("C:/Users/dmog/Documents/cours_stat/Data-20220301/session6_eggs.xls")
+```
+
+Eggs is for the Platorchestia platensis example, and diet is the weight loss for subject ongoing a diet. We will the eggs data for correlations, and the diet for linear regression
+
+# eggs and correlation
+
+check what is inside:
+
+
+```{r}
+df_eggs
+```
+
+##  plot
+
+- make a plot of weigh function of eggs
+
+## correlation
+
+- estimate the correlation with 
+
+```{r}
+cor.test()
+```
+
+- do ?cor.test and try to do Pearson and Spearman. Explain the difference
+
+## linear regression
+
+- do a linear regression predicting the number of eggs in funciton of the weight using `lm()` 
+- inspect the coefficient using `summary()`
+- What do the coefficient mean ? 
+- could you predict the Number of eggs of a 15 g Platorchestia ?
+
+# diet
+
+```{r}
+df_diet
+```
+
+## plot
+
+represent the relationship between the weight loss `Weight.Diff` and `Age`, `height`, and `pre.weight`
+
+## correlations
+
+test the correlations between `Weight.Diff` and the other variables
+
+## regression
+
+- perform the regression `Weight.Diff` in function of the weight before pre.weight, and interpret the result.
+
+
+
+
+

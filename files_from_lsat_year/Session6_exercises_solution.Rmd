@@ -1,0 +1,210 @@
+---
+title: "Session 6"
+output: html_notebook
+---
+This are the exercise for session 6.
+
+We will use two datasets: session6_diet.xls and session6_eggs.xls
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(readxl)
+
+df_diet <- read_xls("C:/Users/dmog/Documents/cours_stat/Data-20220301/session6_diet.xls")
+df_eggs <- read_xls("C:/Users/dmog/Documents/cours_stat/Data-20220301/session6_eggs.xls")
+
+
+```
+
+Eggs is for the Platorchestia platensis example, and diet is the weight loss for subject ongoing a diet. We will the eggs data for correlations, and the diet for linear regression
+
+# eggs and correlation
+
+check what is inside:
+
+
+```{r}
+df_eggs
+```
+
+##  plot
+
+- make a plot of weigh funciton of eggs
+
+```{r}
+plot(df_eggs$weight,df_eggs$NbEggs)
+```
+```{r}
+ggplot(df_eggs,
+       aes(weight,NbEggs))+
+  geom_point(size = 2)+
+  theme_bw()
+```
+
+## correlation
+
+- estimate the correlation with `cor.test()`
+
+```{r}
+cor.test(df_eggs$weight,df_eggs$NbEggs)
+```
+
+- do ?cor.test and try to do Pearson and Spearman. Explain the difference
+
+```{r}
+cor.test(df_eggs$weight,df_eggs$NbEggs,method = "spearman",exact = F)
+```
+
+## linear regression
+
+
+- do a linear regression predicting the number of eggs in funciton of the weight using `lm()` 
+
+```{r}
+fit <- lm(formula = NbEggs ~ weight,
+          data = df_eggs)
+```
+
+
+
+```{r,fig.height=8,fig.width=6}
+library(performance)
+check_model(fit)
+```
+
+
+- inspect the coefficient using `summary()`
+
+```{r}
+summary(fit)
+```
+
+$$ y = a\times x + b $$
+
+```{r}
+plouf <- summary(fit)
+plouf$coefficients
+
+library(broom)
+tidy(fit)
+```
+
+
+
+- What do the coefficients mean ? 
+- could you predict the Number of eggs of a 15 g Platorchestia ?
+- Extra: plot the prediction
+
+```{r}
+predict(fit)
+```
+```{r}
+predict(fit,
+        newdata = data.frame(weight = c(0:100)))
+```
+
+
+```{r}
+df_eggs$predict <- predict(fit)
+
+ggplot(df_eggs)+
+  geom_point(aes(weight,NbEggs),size = 2)+
+  geom_line(aes(weight,predict),color = "red")+
+  theme_bw()
+```
+
+base R:
+
+```{r}
+plot(df_eggs$weight,df_eggs$NbEggs)
+lines(df_eggs$weight,df_eggs$predict,col = 2)
+```
+
+
+# diet
+
+
+```{r}
+df_diet
+```
+
+## plot
+
+represent the relationship between the weight loss `Weight.Diff` and `Age`, `height`, and `pre.weight`
+
+```{r}
+plot(df_diet$Weight.Diff,df_diet$Age)
+```
+etc. ggplot:
+
+```{r}
+ggplot(df_diet)+
+  geom_point(aes(Weight.Diff,Age))
+```
+
+```{r}
+df_diet %>% 
+  pivot_longer(cols = c("Age", "Height", "pre.weight"),names_to = "variable") %>%
+  ggplot(aes(Weight.Diff,value))+
+  geom_point()+
+  facet_wrap(~variable,scales = "free")
+                 
+```
+
+
+## correlations
+
+test the correlations between `Weight.Diff` and the other variables
+
+```{r}
+cor.test(df_diet$Weight.Diff,
+         df_diet$Height)
+```
+
+```{r}
+df_diet$Weight.Diff
+```
+
+
+```{r}
+cor.test(-df_diet$Weight.Diff,df_diet$pre.weight)
+```
+
+```{r}
+cor.test(df_diet$Weight.Diff,df_diet$Age)
+```
+
+## regression
+
+- perform the regression `Weight.Diff` in function of the weight before pre.weight, and interpret the result.
+
+
+```{r}
+lm(Weight.Diff ~ pre.weight,data = df_diet) %>% 
+  summary()
+```
+
+```{r}
+lm(Weight.Diff ~ pre.weight + Age + as.factor(Gender),data = df_diet) %>% 
+  summary()
+```
+```{r}
+lm(Weight.Diff ~  Age,data = df_diet) %>% 
+  summary()
+```
+
+Other tools for regression (among a lot): 
+- `nls()` for non linear regression; 
+- `lmer()` for mixed effect models; 
+- `brms` for bayesian regressions.
+- {lavaan} for structural equation modeling
+- {geepack} and `gee` for generalised estimating equations
+
+Machine learning:
+
+- https://keras.rstudio.com/
+- https://www.tidymodels.org/
+- https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science.html#supervised
+
+
