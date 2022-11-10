@@ -28,7 +28,15 @@ The probability of Type I error is denoted as α and the probability of Type II 
 
 Type 1 Error:- p(reject H0/H0 is true)=α
 
-Type II Error:- p(accept H0/H1 is true)=β
+Type II Error:- p(accept H0/HA is true)=β
+
+
+```{r, out.width = "350px", fig.align="center" , echo=FALSE}
+
+knitr::include_graphics("img/hypothesis.jpg")
+
+```
+
 
 [A note about alpha and beta]{.underline}
 
@@ -40,7 +48,7 @@ There is often an important tradeoff between type I and type II error. Things th
 
 [Power of the test]{.underline}
 
-For testing a hypothesis H0 against H1, the test with probabilities α and β of Type I and Type II errors respectively, the quantity (1- β) is called the power of the test.
+For testing a hypothesis H0 against HA, the test with probabilities α and β of Type I and Type II errors respectively, the quantity (1- β) is called the power of the test.
 
 The power of the test depends upon the difference between the parameter value specified by H0 and the actual value of the parameter.
 
