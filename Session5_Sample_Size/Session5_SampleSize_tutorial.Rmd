@@ -342,7 +342,7 @@ Here are all conventional effect sizes for all tests in the {pwr} package:
 ## Explore More
 
 
-You can laso do this via a GUI with GPower [here](https://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower) 
+You can also do this via a GUI with GPower [here](https://www.psychologie.hhu.de/arbeitsgruppen/allgemeine-psychologie-und-arbeitspsychologie/gpower) 
 
 Power calculations for more complex endpoints and study designs can be found in R packages listed in the Clinical Trials CRAN Task View [here](https://cran.r-project.org/web/views/ClinicalTrials.html). Consider the packages {samplesize}, {TrialSize}, {clusterpower}, {CRTsize}, {cosa}, {PowerTOST}, {PowerUpR}, and which may be relevant for your particular analysis.
 

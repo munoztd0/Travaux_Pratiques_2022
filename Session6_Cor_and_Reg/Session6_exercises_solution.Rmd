@@ -11,40 +11,30 @@ output:
     number_sections: false
 ---
 
-
 # Setup
 
-<!-- #for course -->
-
- <!-- Pearson's correlation coefficient (r). Or in other words: R is a correlation coefficient that measures the strength of the relationship between two variables, as well as the direction on a scatterplot. The value of r is always between a negative one and a positive one (-1 and a +1) -->
- 
-
- <!-- Linear regression is a regression model that uses a straight line to describe the relationship between variables. It finds the line of best fit through your data by searching for the value of the regression coefficient(s) that minimizes the total error of the model. -->
-
-## Start up  - Folder structure
+## Start up - Folder structure
 
 Create a folder
 
-Inside the folder named "Stats_2022" (or whatever you named it)  create a folder named "Session_6" (or whatever similar to your liking)
+Inside the folder named "Stats_2022" (or whatever you named it) create a folder named "Session_6" (or whatever similar to your liking)
 
 And inside this one create a folder names "data" (here I really suggest you call it "data")
 
 ### Download dataset
 
-- session6_diet.xls
-- session6_eggs.xls
+-   session6_diet.xls
+-   session6_eggs.xls
 
 And save it into your "data" folder.
 
+### Create an .Rproject
 
-### Create an .Rproject 
-
-Within RStudio go into Files -> New Project
+Within RStudio go into Files -\> New Project
 
 Choose: Existing Project and browser the "Session_6" folder you just created (or whatever you named it)
 
 This will reload RStudio, don't worry
-
 
 ### Load libraries
 
@@ -54,7 +44,9 @@ library(dplyr) # to wrangle dats
 library(tidyr) # to tidy the data
 library(readxl) # to read the files
 library(here) # to find files
-library(ggplot2)
+library(ggplot2) #to visualize data
+library(performance) #to check model performance
+library(broom) 
 
 
 #these are just Rmarkdown visual options
@@ -83,14 +75,15 @@ df_eggs <- read_xls(here("data", "session6_eggs.xls"))
 
 ```
 
-
-Eggs is for the Platorchestia platensis example, and diet is the weight loss for subject ongoing a diet. 
+Eggs is for the Platorchestia platensis example, and diet is the weight loss for subject ongoing a diet.
 
 We will use the eggs data for correlations, and the diet one for linear regression.
 
-
 # Correlation with the Eggs Data
 
+[Reminder]{.underline}
+
+Pearson's correlation coefficient (r) measures the strength of the relationship between two variables, as well as the direction on a scatterplot. The value of r is always between a negative one and a positive one (-1 and a +1).
 
 Check out the column names and data
 
@@ -98,10 +91,9 @@ Check out the column names and data
 head(df_eggs)
 ```
 
-##  Visulize the data
+## Visulize the data
 
 Make a plot of weigh in function of number of eggs:
-
 
 ```{r}
 
@@ -117,8 +109,6 @@ scatter
 
 Inspect the data, is there anything that you should look for when doing correlations ? Is there any "problem" or can we continue ?
 
-
-
 ## Test the Correlation
 
 Now estimate the correlation between the number of eggs and their weight
@@ -129,6 +119,7 @@ Now estimate the correlation between the number of eggs and their weight
 cor.test(df_eggs$weight, df_eggs$NbEggs)
 
 ```
+
 Now run this chunk and read a bit the cor.test documentation
 
 ```{r}
@@ -136,7 +127,6 @@ Now run this chunk and read a bit the cor.test documentation
 ?cor.test
 
 ```
-
 
 Finally try to compute the Pearson and Spearman correlation of the same previous variables
 
@@ -147,9 +137,13 @@ cor.test(df_eggs$weight, df_eggs$NbEggs, method = "spearman")
 
 Try to explain the different results with your neighbor.
 
-## Linear regression with the Diet Data 
+# Linear regression with the Diet Data
 
+[Reminder]{.underline}
 
+Linear regression is a regression model that uses a straight line to describe the relationship between variables.
+
+It finds the line of `best` fit through your data by searching for the value of the regression coefficient(s) that minimizes the total error of the model.
 
 Check out the column names and data
 
@@ -157,131 +151,145 @@ Check out the column names and data
 head(df_diet)
 ```
 
+## You first model
 
-
-## linear regression
-
-
-- do a linear regression predicting the number of eggs in funciton of the weight using `lm()` 
+-   Try to do a linear regression predicting the number of eggs in function of the weight using `lm()`
 
 ```{r}
-fit <- lm(formula = NbEggs ~ weight,
+#hint: use lm(formula = y ~ x, data = data) 
+#hint2: assign to an object called "model", model <- lm(..)
+
+model <- lm(formula = NbEggs ~ weight,
           data = df_eggs)
 ```
 
+## Check your assumptions !
 
+Use `check_model` for the `performance` library to visualize your linear assumptions
 
 ```{r,fig.height=8,fig.width=6}
-library(performance)
-check_model(fit)
+# library(performance)
+check_model(model)
+
 ```
 
+## Inspect the coefficient
 
-- inspect the coefficient using `summary()`
+Just use `summary` (yes the same function that we use to check out data) to output a table summary of your model
 
 ```{r}
-summary(fit)
+summary(model)
 ```
+
+Or use `tidy` (from the `broom` library) to output a nice but succinct table summary of your model
+
+```{r}
+
+# library(broom)
+tidy(model)
+
+
+```
+
+## Interpretation the coefficients
+
+[Reminder of the formula for simple linear regression]{.underline}
+
+where y is the response (dependent) variable, x is the predictor (independent) variable, a is the estimated slope, and b is the estimated intercept.
 
 $$ y = a\times x + b $$
 
-```{r}
-plouf <- summary(fit)
-plouf$coefficients
+So, looking at the succinct table we have:
 
-library(broom)
-tidy(fit)
+B0 = 12.7 (Y- intercept) B1 = 1.6 (weight coefficient)
+
+[Formula]{.underline} Eggs = 12.7 + 1.6 \* weight
+
+It means a change in one unit in Weight will bring 1.60638 units to change in Number of eggs.
+
+**The standard error** is variability to expect in coefficient which captures sampling variability so the variation in intercept can be up 4.2 and variation in Weight will be 0.62 not more than that.
+
+**Statistic**: Here it is the t-score which is basically the coefficient divided by the standard error.
+
+**p-value**: The t score comes with a p-value associated which relates how statistically significant the variable is to the model.
+
+Question: Are those coefficients statistically significant ?
+
+<!-- ## Residual standard error: 17.31 on 28 degrees of freedom -->
+
+<!-- ## Multiple R-squared: 0.4324, Adjusted R-squared: 0.4121 -->
+
+<!-- ## F-statistic: 21.33 on 1 and 28 DF, p-value: 7.867e-05 -->
+
+<!-- Residual standard error or the standard error of the model is basically the average error for the model which is 17.31 in our case and it means that our model can be off by on an average of 17.31 while predicting the blood pressure. Lesser the error the better the model while predicting. -->
+
+<!-- Multiple R-squared is the ratio of (1-(sum of squared error/sum of squared total)) -->
+
+<!-- Adjusted R-squared: -->
+
+<!-- If we add variables no matter if its significant in prediction or not the value of R-squared will increase which the reason Adjusted R-squared is used because if the variable added isn’t significant for the prediction of the model the value of Adjusted R-squared will reduce, it one of the most helpful tools to avoid overfitting of the model. -->
+
+<!-- F – statistics is the ratio of the mean square of the model and mean square of the error, in other words, it is the ratio of how well the model is doing and what the error is doing, and the higher the F value is the better the model is doing on compared to the error. -->
+
+<!-- One is the degrees of freedom of the numerator of the F – statistic and 28 is the degree of freedom of the errors. -->
+
+## Prediction
+
+Can you try to predict the Number of eggs of a 15 g Platorchestia ?
+
+[The above formula will be used to calculate the Number of eggs]{.underline}
+
+Eggs = 12.7 + 1.6 \* weight
+
+Well of course you can just plug it in the formula:
+
+```{r}
+12.7 + 1.6 * 15
 ```
 
-
-
-- What do the coefficients mean ? 
-- could you predict the Number of eggs of a 15 g Platorchestia ?
-- Extra: plot the prediction
+But let's just say that if you want to do it for a big model and/or a big group of new numbers, you could also do it with `predict`
 
 ```{r}
-predict(fit)
-```
-```{r}
-predict(fit,
-        newdata = data.frame(weight = c(0:100)))
+
+#here I just create a dummy data with various weight of Platorchestia that I want to predict the number 
+p <-  as.data.frame(c(15, 36, 48, 99, 666))
+colnames(p) <- "weight" # give the same name that ou predictor in our model
+
+predict(model, newdata = p)
 ```
 
+## Now plot you model !
+
+Try to plot your regression with `ggplot2`
 
 ```{r}
-df_eggs$predict <- predict(fit)
+#hint: use geom_point()
+#hint2: use stat_smooth(method = "lm", col = "..")
 
-ggplot(df_eggs)+
-  geom_point(aes(weight,NbEggs),size = 2)+
-  geom_line(aes(weight,predict),color = "red")+
+ggplot(df_eggs, aes(weight,NbEggs))+
+  geom_point(size = 2)+
+   stat_smooth(method = "lm", col = "blue") + 
   theme_bw()
 ```
 
-base R:
+# Want More ?
 
-```{r}
-plot(df_eggs$weight,df_eggs$NbEggs)
-lines(df_eggs$weight,df_eggs$predict,col = 2)
-```
+## Plot Multiple relations
 
-
-# diet
-
-
-```{r}
-df_diet
-```
-
-## plot
-
-represent the relationship between the weight loss `Weight.Diff` and `Age`, `height`, and `pre.weight`
-
-```{r}
-plot(df_diet$Weight.Diff,df_diet$Age)
-```
-etc. ggplot:
-
-```{r}
-ggplot(df_diet)+
-  geom_point(aes(Weight.Diff,Age))
-```
+Represent the relationship between the weight loss `Weight.Diff` and `Age`, `height`, and `pre.weight`
 
 ```{r}
 df_diet %>% 
-  pivot_longer(cols = c("Age", "Height", "pre.weight"),names_to = "variable") %>%
+  pivot_longer(cols = c("Age", "Height", "pre.weight"), names_to = "variable") %>%
   ggplot(aes(Weight.Diff,value))+
   geom_point()+
   facet_wrap(~variable,scales = "free")
                  
 ```
 
-
-## correlations
-
-test the correlations between `Weight.Diff` and the other variables
-
-```{r}
-cor.test(df_diet$Weight.Diff,
-         df_diet$Height)
-```
-
-```{r}
-df_diet$Weight.Diff
-```
-
-
-```{r}
-cor.test(-df_diet$Weight.Diff,df_diet$pre.weight)
-```
-
-```{r}
-cor.test(df_diet$Weight.Diff,df_diet$Age)
-```
-
 ## regression
 
-- perform the regression `Weight.Diff` in function of the weight before pre.weight, and interpret the result.
-
+-   perform the regression `Weight.Diff` in function of the weight before pre.weight, and interpret the result.
 
 ```{r}
 lm(Weight.Diff ~ pre.weight,data = df_diet) %>% 
@@ -292,22 +300,24 @@ lm(Weight.Diff ~ pre.weight,data = df_diet) %>%
 lm(Weight.Diff ~ pre.weight + Age + as.factor(Gender),data = df_diet) %>% 
   summary()
 ```
+
 ```{r}
 lm(Weight.Diff ~  Age,data = df_diet) %>% 
   summary()
 ```
 
-Other tools for regression (among a lot): 
-- `nls()` for non linear regression; 
-- `lmer()` for mixed effect models; 
-- `brms` for bayesian regressions.
-- {lavaan} for structural equation modeling
-- {geepack} and `gee` for generalised estimating equations
+# Explore More
 
-Machine learning:
+Other tools for regression (among a lot):
 
-- https://keras.rstudio.com/
-- https://www.tidymodels.org/
-- https://docs.h2o.ai/h2o/latest-stable/h2o-docs/data-science.html#supervised
+-   `nls()` for non linear regression;
+-   `lmer()` for mixed effect models;
+-   `brms` for bayesian regressions. (My favorite)
+-   {lavaan} for structural equation modeling
+-   {geepack} and `gee` for generalised estimating equations
 
+Course with more details on loss minimization -\> [here](https://bookdown.org/brianmachut/uofm_analytics_r_hw_sol_2/linreg.html)
 
+*Learning Statistics with R* -\> [here](https://bookdown.org/ekothe/navarro26/regression.html)
+
+A Bayesian takedown -\> <https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/linear-models.html>
