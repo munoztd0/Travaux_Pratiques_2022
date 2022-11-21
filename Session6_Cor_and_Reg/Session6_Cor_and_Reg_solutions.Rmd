@@ -167,7 +167,7 @@ model <- lm(formula = NbEggs ~ weight,
 
 Use `check_model` for the `performance` library to visualize your linear assumptions
 
-```{r} 
+```{r}
 #,fig.height=8,fig.width=6}
 # library(performance)
 check_model(model)
@@ -176,52 +176,57 @@ check_model(model)
 
 [Reminder of The Four Assumptions of Linear Regression]{.underline}
 
-1. **Linear relationship**: There exists a linear relationship between the independent variable, x, and the dependent variable, y.
- - The easiest way to detect if this assumption is met is to create a scatter plot of x vs. y.  
+1.  **Linear relationship**: There exists a linear relationship between the independent variable, x, and the dependent variable, y.
 
-What to do if this assumption is violated ?
-- Apply a nonlinear transformation to the independent and/or dependent variable. 
-- (Sometimes) Add another independent variable to the model.
+-   The easiest way to detect if this assumption is met is to create a scatter plot of x vs. y.
+    -   What to do if this assumption is violated ?
 
+        -   Apply a nonlinear transformation to the independent and/or dependent variable.
 
-2. **Independence** (advanced): The residuals are independent. In particular, there is no correlation between consecutive residuals (This is mostly relevant when working with time series data. Ideally e.g. fMRI) we don’t want there to be a pattern among consecutive residuals (e.g. residuals shouldn’t steadily grow larger as time goes on.)
+        -   (Sometimes) Add another independent variable to the model.
 
-- To check independence, plot residuals against any time variables present (e.g., order of observation), any spatial variables present, and any variables used in the technique (e.g., factors, regressors). A pattern that is not random suggests lack of independence.
+2.  **Independence** (advanced): The residuals are independent. In particular, there is no correlation between consecutive residuals (This is mostly relevant when working with time series data. Ideally e.g. fMRI) we don't want there to be a pattern among consecutive residuals (e.g. residuals shouldn't steadily grow larger as time goes on.)
 
-What to do if this assumption is violated ?
-- For positive serial correlation, consider adding lags of the dependent and/or independent variable to the model.
-- For negative serial correlation, check to make sure that none of your variables are overdifferenced.
-- For seasonal correlation, consider adding seasonal dummy variables to the model.
+-   To check independence, plot residuals against any time variables present (e.g., order of observation), any spatial variables present, and any variables used in the technique (e.g., factors, regressors). A pattern that is not random suggests lack of independence.
 
-3. **Homoscedasticity (homogeneity ofvariance)**: The residuals have constant variance at every level of x. This is known as homoscedasticity.  When this is not the case, the residuals are said to suffer from heteroscedasticity.
+    -   What to do if this assumption is violated ?
 
-- The simplest way to detect heteroscedasticity is by creating a fitted value vs. residual plot. 
+        -   For positive serial correlation, consider adding lags of the dependent and/or independent variable to the model.
 
-What to do if this assumption is violated ?
+        -   For negative serial correlation, check to make sure that none of your variables are overdifferenced.
 
-- Transform the dependent variable. One common transformation is to simply take the log of the dependent variable.
+        -   For seasonal correlation, consider adding seasonal dummy variables to the model.
 
-- Redefine the dependent variable.  One common way to redefine the dependent variable is to use a rate, rather than the raw value. 
+3.  **Homoscedasticity (homogeneity ofvariance)**: The residuals have constant variance at every level of x. This is known as homoscedasticity. When this is not the case, the residuals are said to suffer from heteroscedasticity.
 
-- Use weighted regression. Another way to fix heteroscedasticity is to use weighted regression (advanced)
+-   The simplest way to detect heteroscedasticity is by creating a fitted value vs. residual plot.
 
+    -   What to do if this assumption is violated ?
 
-4. **Normality**: The residuals of the model are normally distributed.
+        -   Transform the dependent variable. One common transformation is to simply take the log of the dependent variable.
 
-- Check the assumption visually using Q-Q plots. Short for quantile-quantile plot, is a type of plot that we can use to determine whether or not the residuals of a model follow a normal distribution. If the points on the plot roughly form a straight diagonal line, then the normality assumption is met.
+        -   Redefine the dependent variable. One common way to redefine the dependent variable is to use a rate, rather than the raw value.
 
-What to do if this assumption is violated ?
+        -   Use weighted regression. Another way to fix heteroscedasticity is to use weighted regression (advanced)
 
-- First, verify that any outliers aren’t having a huge impact on the distribution. If there are outliers present, make sure that they are real values and that they aren’t data entry errors.
+4.  **Normality**: The residuals of the model are normally distributed.
 
-- Next, you can apply a nonlinear transformation to the independent and/or dependent variable. Common examples include taking the log, the square root, or the reciprocal of the independent and/or dependent variable.
+-   Check the assumption visually using Q-Q plots. Short for quantile-quantile plot, is a type of plot that we can use to determine whether or not the residuals of a model follow a normal distribution. If the points on the plot roughly form a straight diagonal line, then the normality assumption is met.
 
+    -   What to do if this assumption is violated ?
 
-(5. **Influential Observations**: Always check for influential points in your regression models. An then ask if the value is possible/plausible ? Should you keep it ? How much does it influence my final results (do regression with and whithout) ? But this is a whole topic by itself)
+        -   First, verify that any outliers aren't having a huge impact on the distribution. If there are outliers present, make sure that they are real values and that they aren't data entry errors.
+
+        -   Next, you can apply a nonlinear transformation to the independent and/or dependent variable. Common examples include taking the log, the square root, or the reciprocal of the independent and/or dependent variable.
+
+5.  **Influential Observations (not an assumption per se but very important)**: Always check for influential points in your regression models. An then ask if the value is possible/plausible ? Should you keep it ? How much does it influence my final results (do regression with and without) ? But this is a whole topic by itself)If one or more of these assumptions are violated, then the results of our linear regression may be unreliable or even misleading.
+
+    -   What to do if this assumption is violated ?
+    
+        -   Ask an expert and be cautious with your intepretations
 
 
 If one or more of these assumptions are violated, then the results of our linear regression may be unreliable or even misleading.
-
 
 <!-- https://www.statology.org/linear-regression-assumptions/ -->
 
@@ -364,7 +369,7 @@ Other tools for regression (among a lot):
 
 -   `nls()` for non linear regression;
 -   `{lme4}` and `lmer()` for mixed effect models;
--   `{brms}` for bayesian regressions. 
+-   `{brms}` for bayesian regressions.
 -   `{lavaan}` for structural equation modeling
 -   `{geepack}` and `gee` for generalized estimating equations
 
