@@ -1,0 +1,335 @@
+---
+title: "Session R: Correlation and Regression"
+subtitle: "Denis Mongin et David Munoz Tord"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    includes:
+    code_folding: "show"
+    toc: true
+    toc_float: true
+    number_sections: false
+---
+
+# Setup
+
+## Start up - Folder structure
+
+Create a folder
+
+Inside the folder named "Stats_2022" (or whatever you named it) create a folder named "Session_6" (or whatever similar to your liking)
+
+And inside this one create a folder names "data" (here I really suggest you call it "data")
+
+### Download dataset
+
+-   session6_diet.xls
+-   session6_eggs.xls
+
+And save it into your "data" folder.
+
+### Create an .Rproject
+
+Within RStudio go into Files -\> New Project
+
+Choose: Existing Project and browser the "Session_6" folder you just created (or whatever you named it)
+
+This will reload RStudio, don't worry
+
+### Load libraries
+
+```{r, message=FALSE, warning=FALSE}
+#load required packages
+library(dplyr) # to wrangle dats
+library(tidyr) # to tidy the data
+library(readxl) # to read the files
+library(here) # to find files
+library(ggplot2) #to visualize data
+library(performance) #to check model performance
+library(broom) 
+
+
+#these are just Rmarkdown visual options
+knitr::opts_chunk$set(message=F, warning=F, comment=NA) 
+
+
+```
+
+Know where you are !
+
+```{r}
+#here() #from the here packages is a neat magic trick that will find where you files are 
+#given that you are in a .Rproject, type help(here) for more info
+
+```
+
+## Read the data
+
+```{r}
+
+df_diet <- read_xls(here("data", "session6_diet.xls")) #read the data
+#you can also just read it manually
+#il18 <- read_xls("C:/Users/david/Documents/cours_stat/session6_diet.xls") # but this get annoying and buggy very fast
+df_eggs <- read_xls(here("data", "session6_eggs.xls"))
+
+
+```
+
+Eggs is for the Platorchestia platensis example, and diet is the weight loss for subject ongoing a diet.
+
+We will use the eggs data for correlations, and the diet one for linear regression.
+
+# Correlation with the Eggs Data
+
+[Reminder]{.underline}
+
+Pearson's correlation coefficient (r) measures the strength of the relationship between two variables, as well as the direction on a scatterplot. The value of r is always between a negative one and a positive one (-1 and a +1).
+
+Check out the column names and data
+
+```{r}
+head(df_eggs)
+```
+
+## Visualize the data
+
+Make a plot of weigh in function of number of eggs:
+
+```{r}
+
+#hint: ggplot(data, aes(...)) + geom_point()
+#hint2: assign your plot to an object, e.g. scatter <- ggplot(data, aes(...)) + geom_point()
+
+
+
+```
+
+Inspect the data, is there anything that you should look for when doing correlations ? Is there any "problem" or can we continue ?
+
+## Test the Correlation
+
+Now estimate the correlation between the number of eggs and their weight
+
+```{r}
+#hint: use cor.test(data$x, data$y)
+
+
+
+```
+
+Now run this chunk and read a bit the cor.test documentation
+
+```{r}
+
+?cor.test
+
+```
+
+Finally try to compute the Pearson and Spearman correlation of the same previous variables
+
+```{r}
+
+#hint: use cor.test(data$x, data$y, method = "..") 
+
+
+```
+
+Try to explain the different results with your neighbor.
+
+# Linear regression with the Diet Data
+
+[Reminder]{.underline}
+
+Linear regression is a regression model that uses a straight line to describe the relationship between variables.
+
+It finds the line of `best` fit through your data by searching for the value of the regression coefficient(s) that minimizes the total error of the model.
+
+Check out the column names and data
+
+```{r}
+head(df_diet)
+```
+
+## You first model
+
+-   Try to do a linear regression predicting the number of eggs in function of the weight using `lm()`
+
+```{r}
+#hint: use lm(formula = y ~ x, data = data) 
+#hint2: assign to an object called "model", model <- lm(..)
+
+
+```
+
+## Check your assumptions !
+
+Use `check_model` for the `performance` library to visualize your linear assumptions
+
+```{r,fig.height=8,fig.width=6}
+# library(performance)
+check_model(model)
+
+```
+
+
+[Reminder of The Four Assumptions of Linear Regression]{.underline}
+
+1. **Linear relationship**: There exists a linear relationship between the independent variable, x, and the dependent variable, y.
+ - The easiest way to detect if this assumption is met is to create a scatter plot of x vs. y.  
+
+What to do if this assumption is violated ?
+- Apply a nonlinear transformation to the independent and/or dependent variable. 
+- (Sometimes) Add another independent variable to the model.
+
+
+2. **Independence** (advanced): The residuals are independent. In particular, there is no correlation between consecutive residuals (This is mostly relevant when working with time series data. Ideally e.g. fMRI) we don’t want there to be a pattern among consecutive residuals (e.g. residuals shouldn’t steadily grow larger as time goes on.)
+
+- To check independence, plot residuals against any time variables present (e.g., order of observation), any spatial variables present, and any variables used in the technique (e.g., factors, regressors). A pattern that is not random suggests lack of independence.
+
+What to do if this assumption is violated ?
+- For positive serial correlation, consider adding lags of the dependent and/or independent variable to the model.
+- For negative serial correlation, check to make sure that none of your variables are overdifferenced.
+- For seasonal correlation, consider adding seasonal dummy variables to the model.
+
+3. **Homoscedasticity (homogeneity ofvariance)**: The residuals have constant variance at every level of x. This is known as homoscedasticity.  When this is not the case, the residuals are said to suffer from heteroscedasticity.
+
+- The simplest way to detect heteroscedasticity is by creating a fitted value vs. residual plot. 
+
+What to do if this assumption is violated ?
+
+- Transform the dependent variable. One common transformation is to simply take the log of the dependent variable.
+
+- Redefine the dependent variable.  One common way to redefine the dependent variable is to use a rate, rather than the raw value. 
+
+- Use weighted regression. Another way to fix heteroscedasticity is to use weighted regression (advanced)
+
+
+4. **Normality**: The residuals of the model are normally distributed.
+
+- Check the assumption visually using Q-Q plots. Short for quantile-quantile plot, is a type of plot that we can use to determine whether or not the residuals of a model follow a normal distribution. If the points on the plot roughly form a straight diagonal line, then the normality assumption is met.
+
+What to do if this assumption is violated ?
+
+- First, verify that any outliers aren’t having a huge impact on the distribution. If there are outliers present, make sure that they are real values and that they aren’t data entry errors.
+
+- Next, you can apply a nonlinear transformation to the independent and/or dependent variable. Common examples include taking the log, the square root, or the reciprocal of the independent and/or dependent variable.
+
+
+(5. **Influential Observations**: Always check for influential points in your regression models. An then ask if the value is possible/plausible ? Should you keep it ? How much does it influence my final results (do regression with and whithout) ? But this is a whole topic by itself)
+
+
+If one or more of these assumptions are violated, then the results of our linear regression may be unreliable or even misleading.
+
+
+
+## Inspect the coefficient
+
+Just use `summary` (yes the same function that we use to check out data) to output a table summary of your model
+
+```{r}
+summary(model)
+```
+
+Or use `tidy` (from the `broom` library) to output a nice but succinct table summary of your model
+
+```{r}
+
+# library(broom)
+tidy(model)
+
+
+```
+
+## Interpretation the coefficients
+
+[Reminder of the formula for simple linear regression]{.underline}
+
+where y is the response (dependent) variable, x is the predictor (independent) variable, a is the estimated slope, and b is the estimated intercept.
+
+$$ y = a\times x + b $$
+
+So, looking at the succinct table we have:
+
+B0 = 12.7 (Y- intercept) B1 = 1.6 (weight coefficient)
+
+[Formula]{.underline} Eggs = 12.7 + 1.6 \* weight
+
+It means a change in one unit in Weight will bring 1.60638 units to change in Number of eggs.
+
+**The standard error** is variability to expect in coefficient which captures sampling variability so the variation in intercept can be up 4.2 and variation in Weight will be 0.62 not more than that.
+
+**Statistic**: Here it is the t-score which is basically the coefficient divided by the standard error.
+
+**p-value**: The t score comes with a p-value associated which relates how statistically significant the variable is to the model.
+
+Question: Are those coefficients statistically significant ?
+
+<!-- ## Residual standard error: 17.31 on 28 degrees of freedom -->
+
+<!-- ## Multiple R-squared: 0.4324, Adjusted R-squared: 0.4121 -->
+
+<!-- ## F-statistic: 21.33 on 1 and 28 DF, p-value: 7.867e-05 -->
+
+<!-- Residual standard error or the standard error of the model is basically the average error for the model which is 17.31 in our case and it means that our model can be off by on an average of 17.31 while predicting the blood pressure. Lesser the error the better the model while predicting. -->
+
+<!-- Multiple R-squared is the ratio of (1-(sum of squared error/sum of squared total)) -->
+
+<!-- Adjusted R-squared: -->
+
+<!-- If we add variables no matter if its significant in prediction or not the value of R-squared will increase which the reason Adjusted R-squared is used because if the variable added isn’t significant for the prediction of the model the value of Adjusted R-squared will reduce, it one of the most helpful tools to avoid overfitting of the model. -->
+
+<!-- F – statistics is the ratio of the mean square of the model and mean square of the error, in other words, it is the ratio of how well the model is doing and what the error is doing, and the higher the F value is the better the model is doing on compared to the error. -->
+
+<!-- One is the degrees of freedom of the numerator of the F – statistic and 28 is the degree of freedom of the errors. -->
+
+## Prediction
+
+Can you try to predict the Number of eggs of a 15 g Platorchestia ?
+
+[The above formula will be used to calculate the Number of eggs]{.underline}
+
+Eggs = 12.7 + 1.6 \* weight
+
+Well of course you can just plug it in the formula:
+
+```{r}
+12.7 + 1.6 * 15
+```
+
+But let's just say that if you want to do it for a big model and/or a big group of new numbers, you could also do it with `predict`
+
+```{r}
+
+#here I just create a dummy data with various weight of Platorchestia that I want to predict the number 
+p <-  as.data.frame(c(15, 36, 48, 99, 666))
+colnames(p) <- "weight" # give the same name that ou predictor in our model
+
+predict(model, newdata = p)
+```
+
+## Now plot you model !
+
+Try to plot your regression with `ggplot2`
+
+```{r}
+#hint: use geom_point()
+#hint2: use stat_smooth(method = "lm", col = "..")
+
+
+```
+
+# Explore More
+
+Other tools for regression (among a lot):
+
+-   `nls()` for non linear regression;
+-   `{lme4}` and `lmer()` for mixed effect models;
+-   `{brms}` for bayesian regressions. 
+-   `{lavaan}` for structural equation modeling
+-   `{geepack}` and `gee` for generalized estimating equations
+
+[Course with more details on loss minimization](https://bookdown.org/brianmachut/uofm_analytics_r_hw_sol_2/linreg.html)
+
+[Learning Statistics with R](https://bookdown.org/ekothe/navarro26/regression.html)
+
+[A Bayesian takedown (My favorite)](https://bookdown.org/ajkurz/Statistical_Rethinking_recoded/linear-models.html)
